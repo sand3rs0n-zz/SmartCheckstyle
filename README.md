@@ -23,16 +23,16 @@
 ## Project Definition
 
 * Base Set of Features:
-  * Indent checking
-  * Extra whitespace
-  * Newlines
-  * Unused variables, imports, and methods
+  * Indent checking (Nivetha, Surya)
+  * Extra whitespace (Nivetha, Surya)
+  * Newlines (Nivetha, Surya)
+  * Unused variables, imports, and methods (Kate)
 
-* Smarter Static Checks
-  * variable/method name checking
-  * Documentation for public methods
+* Smarter Static Checks 
+  * variable/method name checking (TBD)
+  * Documentation for public methods (Jae)
 
-* Auto-update (stretch goal)
+* Auto-update (Steven)
   * Fix improper indenting
 
 ### References:
