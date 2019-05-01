@@ -29,11 +29,16 @@
   * Unused variables, imports, and methods (Kate)
 
 * Smarter Static Checks 
-  * variable/method name checking (TBD)
+  * variable/method name checking (Steven)
   * Documentation for public methods (Jae)
 
-* Auto-update (Steven)
+* Collector Model (TBD)
+  * Object passed to checkers
+  
+* Auto-update (TBD)
   * Fix improper indenting
+
+* Main.java
 
 ### References:
 * https://javaparser.org/
