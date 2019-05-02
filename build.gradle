@@ -6,6 +6,19 @@ apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 
+//generate jar
+task genJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'SmartCheckStyle',
+                'Implementation-Version': version,
+                'Main-Class': 'edu.uw.csep.scs.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
 repositories {
     mavenCentral()
 }
