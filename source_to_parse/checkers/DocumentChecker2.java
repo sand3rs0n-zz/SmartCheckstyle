@@ -18,4 +18,13 @@ public class StudentWithoutComment {
     public String getName(){
         return this.name;
     }
+
+    /**
+     *
+     * @param offYears: number of yeras off from school
+     * @return
+     */
+    public int getCollageYear(int offYears) {
+        return graduation + 12;
+    }
 }

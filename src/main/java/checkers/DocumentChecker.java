@@ -5,6 +5,9 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.javadoc.Javadoc;
+
+import java.util.Optional;
 
 
 public class DocumentChecker extends VoidVisitorAdapter {
@@ -15,6 +18,9 @@ public class DocumentChecker extends VoidVisitorAdapter {
             if (!n.hasJavaDocComment()){
                 int line = n.getRange().get().begin.line;
                 System.out.println("[Line: " + line + "] public class " + n.getNameAsString() + " is missing document.");
+            } else {
+                Optional<Javadoc> jd = n.getJavadoc();
+                jd.toString();
             }
         }
     }
@@ -25,6 +31,11 @@ public class DocumentChecker extends VoidVisitorAdapter {
             if (!n.hasJavaDocComment()){
                 int line = n.getRange().get().begin.line;
                 System.out.println("[Line: " + line + "] non-private method " + n.getNameAsString() + " is missing document.");
+            } else {
+                if (n.getJavadoc().get().getDescription().isEmpty()){
+                    int line = n.getRange().get().begin.line;
+                    System.out.println("[Line: " + line + "] non-private method " + n.getNameAsString() + " is missing description.");
+                }
             }
         }
     }
