@@ -27,4 +27,12 @@ public class StudentWithoutComment {
     public int getCollageYear(int offYears) {
         return graduation + 12;
     }
+
+    /**
+     *
+     * @param familyName family name
+     */
+    public int getFullName(String familyName) {
+        return name + " " + familyName;
+    }
 }
