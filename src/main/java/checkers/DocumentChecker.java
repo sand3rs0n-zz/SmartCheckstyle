@@ -1,9 +1,11 @@
 package checkers;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.javadoc.JavadocBlockTag;
@@ -13,6 +15,22 @@ import java.util.*;
 
 public class DocumentChecker extends VoidVisitorAdapter {
 
+    @Override
+    public void visit(CompilationUnit n, Object arg) {
+        super.visit(n, arg);
+        List<Comment> comments = n.getAllContainedComments();
+        for (Comment comment: comments) {
+            if (!comment.getCommentedNode().isPresent()) {
+                int line = comment.getRange().get().begin.line;
+                System.out.println("[Line: " + line + "] Orphant comment found; "
+                        + comment.getContent());
+            }
+
+        }
+
+    }
+
+    @Override
     public void visit(ClassOrInterfaceDeclaration n, Object arg) {
         super.visit(n, arg);
         if (n.isPublic()) {
@@ -27,12 +45,12 @@ public class DocumentChecker extends VoidVisitorAdapter {
         }
     }
 
+    @Override
     public void visit(MethodDeclaration n, Object arg) {
 
         super.visit(n, arg);
-        if (n.isPrivate()){
+        if (n.isPrivate())
             return;
-        }
 
         int line = n.getRange().get().begin.line;
         if (!n.hasJavaDocComment()) {
@@ -91,7 +109,9 @@ public class DocumentChecker extends VoidVisitorAdapter {
 
     }
 
+    @Override
     public void visit(FieldDeclaration n, Object arg) {
+        super.visit(n, arg);
         if (n.isPublic()) {
             if (!n.hasJavaDocComment()) {
                 int line = n.getRange().get().begin.line;
