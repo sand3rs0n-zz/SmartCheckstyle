@@ -13,7 +13,7 @@ import com.github.javaparser.javadoc.JavadocBlockTag;
 import java.util.*;
 
 
-public class DocumentChecker extends VoidVisitorAdapter<Object> {
+public class JavaDocChecker extends VoidVisitorAdapter<Object> {
 
     @Override
     public void visit(CompilationUnit n, Object arg) {

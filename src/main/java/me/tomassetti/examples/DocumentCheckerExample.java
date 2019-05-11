@@ -1,6 +1,6 @@
 package me.tomassetti.examples;
 
-import checkers.DocumentChecker;
+import checkers.JavaDocChecker;
 import com.github.javaparser.JavaParser;
 import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
@@ -16,7 +16,7 @@ public class DocumentCheckerExample {
             System.out.println(path);
 
             try {
-                DocumentChecker dChecker = new DocumentChecker();
+                JavaDocChecker dChecker = new JavaDocChecker();
                 dChecker.visit(JavaParser.parse(file), null);
             } catch (IOException e) {
                 new RuntimeException(e);
