@@ -8,7 +8,7 @@ import me.tomassetti.support.DirExplorer;
 import java.io.File;
 import java.io.IOException;
 
-public class DocumentCheckerExample {
+public class JavaDocCheckerExample {
 
     public static void checkDocuments(File projectDir) {
 
