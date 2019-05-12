@@ -3,3 +3,7 @@
 out
 .gradle
 /build/
+.classpath
+.project
+.settings/
+
