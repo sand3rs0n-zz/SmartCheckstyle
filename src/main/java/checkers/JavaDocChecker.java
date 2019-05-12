@@ -9,21 +9,38 @@ import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.javadoc.Javadoc;
 import com.github.javaparser.javadoc.JavadocBlockTag;
+import models.Issue;
 
 import java.util.*;
 
 
-public class JavaDocChecker extends VoidVisitorAdapter<Object> {
+public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
 
+    private String packageName;
+    private String fileName;
+    private String issueType = "JAVADOC";
+    
+    public JavaDocChecker(String fileName) {
+        this.fileName = fileName;
+    }
+    
     @Override
-    public void visit(CompilationUnit n, Object arg) {
-        super.visit(n, arg);
+    public void visit(CompilationUnit n, List<Issue> issues) {
+        if (n.getPackageDeclaration().isPresent()) {
+            this.packageName = n.getPackageDeclaration().toString();
+        } else {
+            this.packageName = "N/A";
+        }
+        super.visit(n, issues);
         List<Comment> comments = n.getAllContainedComments();
         for (Comment comment: comments) {
             if (!comment.getCommentedNode().isPresent()) {
-                int line = comment.getRange().get().begin.line;
-                System.out.println("[Line: " + line + "] Orphant comment found; "
-                        + comment.getContent());
+                int lineNumber = comment.getRange().get().begin.line;
+                String errMessage = "Orphant comment found.";
+                Issue issue = new Issue(this.packageName, this.fileName, lineNumber,
+                                        this.issueType, errMessage);
+                System.out.println(issue);
+                issues.add(issue);
             }
 
         }
@@ -31,8 +48,8 @@ public class JavaDocChecker extends VoidVisitorAdapter<Object> {
     }
 
     @Override
-    public void visit(ClassOrInterfaceDeclaration n, Object arg) {
-        super.visit(n, arg);
+    public void visit(ClassOrInterfaceDeclaration n, List<Issue> issues) {
+        super.visit(n, issues);
         if (n.isPublic()) {
             if (!n.hasJavaDocComment()) {
                 int line = n.getRange().get().begin.line;
@@ -46,9 +63,9 @@ public class JavaDocChecker extends VoidVisitorAdapter<Object> {
     }
 
     @Override
-    public void visit(MethodDeclaration n, Object arg) {
+    public void visit(MethodDeclaration n, List<Issue> issues) {
 
-        super.visit(n, arg);
+        super.visit(n, issues);
         if (n.isPrivate())
             return;
 
@@ -110,8 +127,8 @@ public class JavaDocChecker extends VoidVisitorAdapter<Object> {
     }
 
     @Override
-    public void visit(FieldDeclaration n, Object arg) {
-        super.visit(n, arg);
+    public void visit(FieldDeclaration n, List<Issue> issues) {
+        super.visit(n, issues);
         if (n.isPublic()) {
             if (!n.hasJavaDocComment()) {
                 int line = n.getRange().get().begin.line;

@@ -4,20 +4,24 @@ import checkers.JavaDocChecker;
 import com.github.javaparser.JavaParser;
 import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
+import models.Issue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class JavaDocCheckerExample {
 
-    public static void checkDocuments(File projectDir) {
-
+    public static void checkDocuments(File projectDir, List<Issue> issues) {
+        
         new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
             System.out.println(path);
 
             try {
-                JavaDocChecker dChecker = new JavaDocChecker();
-                dChecker.visit(JavaParser.parse(file), null);
+                JavaDocChecker dChecker = new JavaDocChecker(path);
+                dChecker.visit(JavaParser.parse(file), issues);
             } catch (IOException e) {
                 new RuntimeException(e);
             }
@@ -27,7 +31,9 @@ public class JavaDocCheckerExample {
 
     public static void main(String[] args) {
         File projectDir = new File("source_to_parse/checkers");
-        checkDocuments(projectDir);
+        List<Issue> issues = new LinkedList<>();
+        checkDocuments(projectDir, issues);
+        System.out.println(issues);
     }
 }
 
