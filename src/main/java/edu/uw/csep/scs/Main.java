@@ -30,6 +30,11 @@ public class Main {
             return;
         }
 
+        if (!cmd.hasOption("i")) {
+            showOptions(options, "Missing input(-i) parameter");
+            return;
+        }
+        
         String filePath = cmd.getOptionValue("i");
 
         if (cmd.hasOption("j")) {
