@@ -3,6 +3,7 @@ package me.tomassetti.examples;
 import checkers.DocumentChecker;
 import checkers.UnusedMethodChecker;
 import checkers.UnusedChecker;
+import checkers.UnusedVariableChecker;
 import com.github.javaparser.JavaParser;
 import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
@@ -48,6 +49,9 @@ public class DocumentCheckerExample {
 
         UnusedMethodChecker u = new UnusedMethodChecker();
         u.checkUnusedMethods(projectDir);
+
+        UnusedVariableChecker v = new UnusedVariableChecker();
+        v.checkUnusedVariables(projectDir);
 
         System.out.println("Completed");
     }

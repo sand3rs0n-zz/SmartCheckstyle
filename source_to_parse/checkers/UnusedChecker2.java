@@ -7,7 +7,8 @@ public class UnusedChecker2 {
     public static void main(String[] args){
         IOException ex = new IOException();
         callSum();
-
+        System.out.println(test);
+        System.out.println(testNumber);
     }
 
     public static void callSum(){

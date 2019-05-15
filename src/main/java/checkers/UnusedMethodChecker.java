@@ -2,7 +2,6 @@ package checkers;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -59,7 +58,7 @@ public class UnusedMethodChecker {
                 allMethods.removeAll(usedDeclarations);
                 for (int i = 0; i < allMethods.size(); i++) {
                     MethodDeclaration unused = allMethods.get(i);
-                    if (!unused.getName().equals('main')){
+                    if (!unused.getName().equals("main")){
                         System.out.println("Method " + unused.getName() + " is not used, please remove");
                     }
                 }
