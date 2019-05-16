@@ -27,7 +27,7 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
     @Override
     public void visit(CompilationUnit n, List<Issue> issues) {
         if (n.getPackageDeclaration().isPresent()) {
-            this.packageName = n.getPackageDeclaration().toString();
+            this.packageName = n.getPackageDeclaration().get().getNameAsString().trim();
         } else {
             this.packageName = "N/A";
         }
