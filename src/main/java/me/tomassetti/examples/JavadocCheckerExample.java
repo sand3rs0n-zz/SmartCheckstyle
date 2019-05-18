@@ -8,6 +8,8 @@ import models.Issue;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,7 +34,14 @@ public class JavadocCheckerExample {
         File projectDir = new File("source_to_parse/checkers");
         List<Issue> issues = new LinkedList<>();
         checkDocuments(projectDir, issues);
-        System.out.println(issues);
+    
+        Collections.sort(issues, Comparator.comparing(Issue::getPackageName)
+                .thenComparing(Issue::getFileName)
+                .thenComparing(Issue::getLineNumber));
+        
+        for (Issue issue : issues) {
+            System.out.println(issue);
+        }
     }
 }
 

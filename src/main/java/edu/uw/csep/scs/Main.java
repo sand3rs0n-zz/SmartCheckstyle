@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import checkers.DeclarationChecker;
+import checkers.JavadocChecker;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import models.Issue;
@@ -61,7 +62,8 @@ public class Main {
             }
 
             if (cmd.hasOption("j")) {
-                System.out.println("TODO: Check javadoc...");
+                JavadocChecker javadocChecker = new JavadocChecker(file.getName());
+                javadocChecker.visit(compilationUnit, issues);
             }
 
             if (cmd.hasOption("d")) {
