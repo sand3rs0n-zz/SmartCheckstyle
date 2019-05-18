@@ -23,7 +23,7 @@ public class Main {
         Option help = new Option("h", false, "options");
         options.addOption(help);
 
-        Option input = new Option("i",true,"input file path");
+        Option input = new Option("i",true,"input root directory or file path");
         options.addOption(input);
 
         Option modify = new Option("m",false,"modify files");
@@ -47,25 +47,27 @@ public class Main {
             showOptions(options, "Missing input(-i) parameter");
             return;
         }
-        
-        String filePath = cmd.getOptionValue("i");
-        File file = new File(filePath);
-        CompilationUnit compilationUnit;
-        try {
-            compilationUnit = JavaParser.parse(file);
-        } catch (Exception e) {
-            return;
-        }
+
+        List<File> files = generateFileList(cmd.getOptionValue("i"));
 
         List<Issue> issues = new ArrayList();
 
-        if (cmd.hasOption("j")) {
-            System.out.println("TODO: Check javadoc...");
-        }
+        for (File file : files) {
+            CompilationUnit compilationUnit;
+            try {
+                compilationUnit = JavaParser.parse(file);
+            } catch (Exception e) {
+                return;
+            }
 
-        if (cmd.hasOption("d")) {
-            DeclarationChecker declarationChecker = new DeclarationChecker(file.getName());
-            declarationChecker.visit(compilationUnit, issues);
+            if (cmd.hasOption("j")) {
+                System.out.println("TODO: Check javadoc...");
+            }
+
+            if (cmd.hasOption("d")) {
+                DeclarationChecker declarationChecker = new DeclarationChecker(file.getName());
+                declarationChecker.visit(compilationUnit, issues);
+            }
         }
 
         Collections.sort(issues, Comparator.comparing(Issue::getPackageName)
@@ -75,6 +77,19 @@ public class Main {
         for (Issue issue : issues) {
             System.out.println(issue);
         }
+    }
+
+    private static List<File> generateFileList(String rootPath) {
+        List<File> files = new ArrayList<>();
+        File rootDirFile = new File(rootPath);
+        if (rootDirFile.isDirectory()) {
+            for (File file : rootDirFile.listFiles()) {
+                files.addAll(generateFileList(file.getAbsolutePath()));
+            }
+        } else if (rootDirFile.isFile() && rootDirFile.getName().endsWith(".java")) {
+            files.add(rootDirFile);
+        }
+        return files;
     }
 
     private static void showOptions(Options options, String message) {
