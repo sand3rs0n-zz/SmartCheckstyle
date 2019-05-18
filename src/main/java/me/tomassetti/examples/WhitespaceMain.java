@@ -14,7 +14,7 @@ import java.util.List;
 public class WhitespaceMain {
     public static void checkDocuments(File projectDir, List<Issue> issues) {
 
-        new DirExplorer((level, path, file) -> path.endsWith("Brackets.java"), (level, path, file) -> {
+        new DirExplorer((level, path, file) -> path.endsWith("WhitespaceTestClass.java"), (level, path, file) -> {
             System.out.println(path);
 
             try {

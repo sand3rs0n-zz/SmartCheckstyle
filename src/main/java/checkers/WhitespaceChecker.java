@@ -1,6 +1,8 @@
 package checkers;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.stmt.IfStmt;
@@ -8,13 +10,20 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.javadoc.Javadoc;
 import models.Issue;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
     private String packageName;
     private String fileName;
     private String issueType = "WHITESPACE";
+    private List<Integer> ifStmtLineNumbers = new ArrayList<>();
 
     public WhitespaceChecker(String fileName) {
         this.fileName = fileName;
@@ -27,65 +36,48 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
         } else {
             this.packageName = "N/A";
         }
-        super.visit(n, issues);
-        /*
-        List<Comment> comments = n.getAllContainedComments();
-        for (Comment comment: comments) {
-            if (!comment.getCommentedNode().isPresent()) {
-                int lineNumber = comment.getRange().get().begin.line;
-                String errMessage = "Orphant comment found.";
-                Issue issue = new Issue(this.packageName, this.fileName, lineNumber,
-                        this.issueType, errMessage);
-                System.out.println(issue);
-                issues.add(issue);
-            }
 
+        super.visit(n, issues);
+
+        int nextIfLineIdx = 0;
+        int curLineNumber = 1;
+        try (BufferedReader br = new BufferedReader(new FileReader("source_to_parse/checkers"+this.fileName))) {
+            while (br.ready() && nextIfLineIdx < ifStmtLineNumbers.size()) {
+                String line = br.readLine();
+                if (curLineNumber ==  ifStmtLineNumbers.get(nextIfLineIdx)) {
+                    validateIfStmt(line, curLineNumber);
+                    nextIfLineIdx++;
+                }
+
+                curLineNumber++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        */
     }
 
     @Override
     public void visit(IfStmt n, List<Issue> issues) {
         super.visit(n, issues);
-        String ifBlock = n.getParentNode().toString();
-        int i=0;
-        boolean ifFound = false;
-        for (; i < ifBlock.length() - 2; i++) {
-            String s = ifBlock.substring(i, i+2);
-            if ( s.equals("if")) {
-                ifFound = true;
-                i += 2;
-                break;
-            }
+        ifStmtLineNumbers.add(n.getRange().get().begin.line);
+    }
+
+    private void validateIfStmt(String ifBlock, int line) {
+        int numWhitespaces = 0;
+        Pattern whitespace = Pattern.compile(".*if\\s[(].*");
+        Matcher matcher = whitespace.matcher(ifBlock);
+        if (matcher.find()) {
+            numWhitespaces = 1;
+            return;
         }
 
-        int numWhiteSpaces = 0;
-        if (ifFound) {
-            while (i < ifBlock.length() && ifBlock.charAt(i) == ' ') {
-                numWhiteSpaces++;
-                i++;
-            }
-        }
-
-        if (ifFound && numWhiteSpaces == 0) {
-            int line = n.getRange().get().begin.line;
-            System.out.println("[Line: " + line + "] if statement is missing whitespace.");
-        } else if (numWhiteSpaces > 1) {
-            int line = n.getRange().get().begin.line;
+        Pattern multiWhitespace = Pattern.compile(".*if\\s\\s+[(].*");
+        matcher = multiWhitespace.matcher(ifBlock);
+        if (matcher.find()) {
             System.out.println("[Line: " + line + "] if statement has multiple whitespace.");
-        }
-        /*
-        if (n.isPublic()) {
-            if (!n.hasJavaDocComment()) {
-                int line = n.getRange().get().begin.line;
-                System.out.println("[Line: " + line + "] public class "
-                        + n.getNameAsString() + " is missing document.");
-            } else {
-                Optional<Javadoc> jd = n.getJavadoc();
-                jd.toString();
-            }
+            return;
         }
 
-         */
+        System.out.println("[Line: " + line + "] if statement is missing whitespace.");
     }
 }

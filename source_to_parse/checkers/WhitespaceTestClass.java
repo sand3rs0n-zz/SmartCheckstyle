@@ -8,7 +8,7 @@ public class WhitespaceTestClass {
     private int age;
 
     public int getAbs(int x) {
-        if      (x < 0) {
+        if  (x < 0) {
             x *= -1;
         }
 
