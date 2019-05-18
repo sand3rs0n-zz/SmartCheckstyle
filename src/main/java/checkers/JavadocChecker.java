@@ -14,13 +14,13 @@ import models.Issue;
 import java.util.*;
 
 
-public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
+public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
 
     private String packageName;
     private String fileName;
     private String issueType = "JAVADOC";
     
-    public JavaDocChecker(String fileName) {
+    public JavadocChecker(String fileName) {
         this.fileName = fileName;
     }
     
@@ -42,7 +42,6 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
                 System.out.println(issue);
                 issues.add(issue);
             }
-
         }
 
     }

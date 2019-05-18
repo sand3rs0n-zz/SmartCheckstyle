@@ -1,6 +1,6 @@
 package me.tomassetti.examples;
 
-import checkers.JavaDocChecker;
+import checkers.JavadocChecker;
 import com.github.javaparser.JavaParser;
 import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
@@ -8,11 +8,10 @@ import models.Issue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JavaDocCheckerExample {
+public class JavadocCheckerExample {
 
     public static void checkDocuments(File projectDir, List<Issue> issues) {
         
@@ -20,7 +19,7 @@ public class JavaDocCheckerExample {
             System.out.println(path);
 
             try {
-                JavaDocChecker dChecker = new JavaDocChecker(path);
+                JavadocChecker dChecker = new JavadocChecker(path);
                 dChecker.visit(JavaParser.parse(file), issues);
             } catch (IOException e) {
                 new RuntimeException(e);
