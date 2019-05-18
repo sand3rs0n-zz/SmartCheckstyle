@@ -1,5 +1,6 @@
 package me.tomassetti.examples;
 
+import checkers.NewLineChecker;
 import com.github.javaparser.JavaParser;
 import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
