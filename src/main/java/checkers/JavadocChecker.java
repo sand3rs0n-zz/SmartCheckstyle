@@ -14,20 +14,20 @@ import models.Issue;
 import java.util.*;
 
 
-public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
+public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
 
     private String packageName;
     private String fileName;
-    private String issueType = "JAVADOC";
+    private final static String ISSUE_TYPE = "JAVADOC";
     
-    public JavaDocChecker(String fileName) {
+    public JavadocChecker(String fileName) {
         this.fileName = fileName;
     }
     
     @Override
     public void visit(CompilationUnit n, List<Issue> issues) {
         if (n.getPackageDeclaration().isPresent()) {
-            this.packageName = n.getPackageDeclaration().toString();
+            this.packageName = n.getPackageDeclaration().get().getNameAsString().trim();
         } else {
             this.packageName = "N/A";
         }
@@ -36,13 +36,8 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
         for (Comment comment: comments) {
             if (!comment.getCommentedNode().isPresent()) {
                 int lineNumber = comment.getRange().get().begin.line;
-                String errMessage = "Orphant comment found.";
-                Issue issue = new Issue(this.packageName, this.fileName, lineNumber,
-                                        this.issueType, errMessage);
-                System.out.println(issue);
-                issues.add(issue);
+                issues.add(generateIssue(lineNumber, "Orphant comment found."));
             }
-
         }
 
     }
@@ -52,12 +47,11 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
         super.visit(n, issues);
         if (n.isPublic()) {
             if (!n.hasJavaDocComment()) {
-                int line = n.getRange().get().begin.line;
-                System.out.println("[Line: " + line + "] public class "
-                        + n.getNameAsString() + " is missing document.");
+                int lineNumber = n.getRange().get().begin.line;
+                issues.add(generateIssue(lineNumber, n.getNameAsString()
+                        + " is missing javadoc."));
             } else {
                 Optional<Javadoc> jd = n.getJavadoc();
-                jd.toString();
             }
         }
     }
@@ -69,37 +63,43 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
         if (n.isPrivate())
             return;
 
-        int line = n.getRange().get().begin.line;
+        int lineNumber = n.getRange().get().begin.line;
+        String methodName = n.getNameAsString();
         if (!n.hasJavaDocComment()) {
-            System.out.println("[Line: " + line + "] non-private method "
-                    + n.getNameAsString() + " is missing document.");
+            issues.add(generateIssue(lineNumber, "Non-private method, "
+                    + methodName + ", is missing javadoc."));
+            
         } else {
+            
             if (n.getJavadoc().get().getDescription().isEmpty()) {
-                System.out.println("[Line: " + line + "] non-private method "
-                        + n.getNameAsString() + " is missing description.");
+                issues.add(generateIssue(lineNumber, "Non-private method, "
+                        + methodName + ", is missing javadoc."));
             }
 
             if (n.getJavadoc().get().getBlockTags().size() < n.getParameters().size()) {
-                System.out.println("[Line: " + line + "] non-private method "
-                        + n.getNameAsString() + " is missing tag(s).");
+                issues.add(generateIssue(lineNumber, "Non-private method, "
+                        + methodName + ", is missing tags."));
+                
             } else if (n.getJavadoc().get().getBlockTags().size() > n.getParameters().size()) {
-                System.out.println("[Line: " + line + "] non-private method "
-                        + n.getNameAsString() + " has unnecessary tag(s).");
+                issues.add(generateIssue(lineNumber, "Non-private method, "
+                        + methodName + ", has unnecessary tag(s)."));
+                
             } else {
-                // TODO: check missing parameters and add them to node.
                 List<JavadocBlockTag> blockTags = n.getJavadoc().get().getBlockTags();
                 HashSet<String> tagSet = new HashSet<>();
                 for (JavadocBlockTag blockTag: blockTags) {
-                    tagSet.add(blockTag.getName().get());
-                }
-
-                for (Parameter parameter: n.getParameters()) {
-                    tagSet.remove(parameter.getNameAsString());
+                    try {
+                        blockTag.getName().ifPresent(name -> tagSet.add(name));
+                    } catch (NoSuchElementException e) {
+                        System.out.println(fileName + " " + lineNumber);
+                        throw e;
+                    }
+                    
                 }
 
                 if (tagSet.size() > 0) {
-                    System.out.println("[Line: " + line + "] non-private method "
-                            + n.getNameAsString() + " has unmatched tag(s).");
+                    issues.add(generateIssue(lineNumber, "Non-private method, "
+                            + methodName + ", has unmatched tag(s)."));
                 }
             }
 
@@ -109,19 +109,12 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
                         || blockTag.getType() == JavadocBlockTag.Type.RETURN
                         || blockTag.getType() == JavadocBlockTag.Type.THROWS
                         || blockTag.getType() == JavadocBlockTag.Type.DEPRECATED) {
-                        System.out.println("[Line: " + line + "] tag "
-                                + blockTag.getType().toString() + " is missing description.");
+                        issues.add(generateIssue(lineNumber, "block tag "
+                                + blockTag.getName().toString() + " is missing description."));
                     }
                 }
             }
 
-            /*
-            // TODO: Smart feature(?) - remove missing line (do we want this or just warning?)
-            Predicate<JavadocBlockTag> emptyCheck = e -> e.getContent().isEmpty();
-            System.out.println(n.getJavadoc().get().getBlockTags().size());
-            n.getJavadoc().get().getBlockTags().removeIf(emptyCheck);
-            System.out.println(n.getJavadoc().get().getBlockTags().size());
-            */
         }
 
     }
@@ -131,11 +124,16 @@ public class JavaDocChecker extends VoidVisitorAdapter<List<Issue>> {
         super.visit(n, issues);
         if (n.isPublic()) {
             if (!n.hasJavaDocComment()) {
-                int line = n.getRange().get().begin.line;
-                System.out.println("[Line: " + line + "] " + n.getModifiers().toString()
-                        + " is missing document.");
+                int lineNumber = n.getRange().get().begin.line;
+                String fieldName = n.getMetaModel().getMetaModelFieldName();
+                issues.add(generateIssue(lineNumber, "Public field "
+                        + fieldName + " is missing document."));
             }
         }
+    }
+    
+    private Issue generateIssue(int lineNumber, String errMessage) {
+        return new Issue(packageName, fileName, lineNumber, ISSUE_TYPE, errMessage);
     }
 
 }

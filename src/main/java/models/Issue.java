@@ -17,6 +17,18 @@ public class Issue {
         this.errMessage = errMessage;
         
     }
+
+    public String getPackageName() {
+        return this.packageName;
+    }
+
+    public String getFileName() {
+        return this.fileName;
+    }
+
+    public int getLineNumber() {
+        return this.lineNumber;
+    }
     
     @Override
     public String toString() {

@@ -4,7 +4,7 @@ import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.Visitable;
 
-public class JavaDocModifier extends ModifierVisitor<Object> {
+public class JavadocModifier extends ModifierVisitor<Object> {
 
     @Override
     public Visitable visit(LineComment n, Object arg) {
