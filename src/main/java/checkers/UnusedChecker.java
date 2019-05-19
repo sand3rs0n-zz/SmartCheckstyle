@@ -1,52 +1,91 @@
 package checkers;
 
+import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.type.TypeParameter;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.metamodel.ClassOrInterfaceTypeMetaModel;
+import com.google.common.base.Strings;
+import me.tomassetti.support.DirExplorer;
+import com.github.javaparser.ast.expr.SimpleName;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-public class UnusedChecker extends VoidVisitorAdapter {
-   @Override
-    public void visit(CompilationUnit n, Object arg) {
-       super.visit(n, arg);
-       List<ImportDeclaration> used = new NodeList<ImportDeclaration>();
-       NodeList<ImportDeclaration> imports = n.getImports();
-       NodeList<TypeDeclaration<?>> types = n.getTypes();
-       List<ClassOrInterfaceDeclaration> interfaces = n.getChildNodesByType(ClassOrInterfaceDeclaration.class);
-       boolean found;
-       for (int i = 0; i < imports.size(); i++){
-           found = false;
-           ImportDeclaration iD = imports.get(i);
-           for (int j = 0; j < types.size(); j++){
-                if (iD.getName().toString().equals(types.get(j).getName().toString())){
-                    used.add(iD);
-                    found = true;
-                    break;
-                }
-            }
-           if (!found) {
-               for (ClassOrInterfaceDeclaration inter : interfaces) {
-                   if (checkInterfaces(inter, iD)) {
-                       used.add(iD);
-                   }
-               }
+public class UnusedChecker {
 
-           }
-       }
-       System.out.println(used.size());
+    public void checkUnusedImports(File projectDir) {
+        new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
+            System.out.println(path);
+
+            try {
+                CompilationUnit cu = JavaParser.parse(file);
+                NodeList<ImportDeclaration> imports = cu.getImports();
+                for (ImportDeclaration i : imports) {
+                    System.out.println(i.getName());
+                }
+
+                List<Node> children = cu.getChildNodes();
+                NodeList<ClassOrInterfaceType> allClasses = new NodeList<>();
+                for (int i = 0; i < children.size(); i++) {
+                    NodeList<ClassOrInterfaceType> classes = findChildClasses(children.get(i), allClasses);
+                    for (int j = 0; j < classes.size(); j++){
+                        if (!checkContains(classes.get(j).getName(), allClasses)){
+                            allClasses.add(classes.get(j));
+                        }
+                    }
+                }
+
+                //identify non-static imports
+                NodeList<ImportDeclaration> used = new NodeList<>();
+                for (int i = 0; i < imports.size(); i++){
+                    for (int j = 0; j < allClasses.size(); j++){
+                        if (imports.get(i).getNameAsString().contains(allClasses.get(j).getNameAsString())){
+                            if (!used.contains(imports.get(i))) { used.add(imports.get(i));}
+                        }
+                    }
+
+
+                }
+
+                for (ImportDeclaration i : imports){
+                    if (!used.contains(i)){
+                        System.out.println(i.getName() + " is not used, please remove");
+                    }
+                }
+
+            } catch (IOException e) {
+                new RuntimeException(e);
+            }
+            System.out.println(Strings.repeat("=", path.length()));
+        }).explore(projectDir);
     }
 
-    private boolean checkInterfaces(ClassOrInterfaceDeclaration i, ImportDeclaration imp){
-        if (!i.isGeneric()){
-            return false;
+    public  NodeList<ClassOrInterfaceType> findChildClasses(Node child, NodeList<ClassOrInterfaceType> classes){
+        if (child.getClass().equals(ClassOrInterfaceType.class)){
+            classes.add((ClassOrInterfaceType)child);
+            return classes;
         }
-        NodeList<TypeParameter> params = i.getTypeParameters();
-        for (TypeParameter p: params ){
-            if (p.getName().toString().equals(imp.getName())){
+
+        List<Node> children = child.getChildNodes();
+        for (int i = 0; i < children.size(); i++) {
+            NodeList<ClassOrInterfaceType> m = findChildClasses(children.get(i), classes);
+            for (int j = 0; j < m.size(); j++){
+                if (!checkContains(m.get(j).getName(), classes)) {
+                    classes.add(m.get(j));
+                }
+            }
+        }
+        return classes;
+
+    }
+
+    public boolean checkContains(SimpleName className, NodeList<ClassOrInterfaceType> classes){
+        for (ClassOrInterfaceType c : classes){
+            if (className.equals(c.getName())){
                 return true;
             }
         }

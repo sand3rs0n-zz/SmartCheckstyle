@@ -8,7 +8,6 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.google.common.base.Strings;
-import com.sun.org.apache.xpath.internal.operations.Variable;
 import me.tomassetti.support.DirExplorer;
 
 import java.io.File;

@@ -27,31 +27,19 @@ public class DocumentCheckerExample {
         }).explore(projectDir);
     }
 
-    public static void checkUnusedImports(File projectDir) {
-          new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
-            System.out.println(path);
-
-            try {
-                UnusedChecker uChecker = new UnusedChecker();
-                uChecker.visit(JavaParser.parse(file), null);
-            } catch (IOException e) {
-                new RuntimeException(e);
-            }
-            System.out.println(Strings.repeat("=", path.length()));
-        }).explore(projectDir);
-    }
-
 
     public static void main(String[] args) {
         File projectDir = new File("source_to_parse/checkers");
         checkDocuments(projectDir);
-        checkUnusedImports(projectDir);
 
         UnusedMethodChecker u = new UnusedMethodChecker();
         u.checkUnusedMethods(projectDir);
 
         UnusedVariableChecker v = new UnusedVariableChecker();
         v.checkUnusedVariables(projectDir);
+
+        UnusedChecker i = new UnusedChecker();
+        i.checkUnusedImports(projectDir);
 
         System.out.println("Completed");
     }
