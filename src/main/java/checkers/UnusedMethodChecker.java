@@ -90,7 +90,6 @@ public class UnusedMethodChecker {
     public NodeList<MethodCallExpr> findUsedMethods(Node cu, NodeList<MethodCallExpr> methods) {
         if (cu.getClass().equals(MethodCallExpr.class)) {
             methods.add((MethodCallExpr)cu);
-            return methods;
         }
         List<Node> children = cu.getChildNodes();
         for (int i = 0; i < children.size(); i++) {

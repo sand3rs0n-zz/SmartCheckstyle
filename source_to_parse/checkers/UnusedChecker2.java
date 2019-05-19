@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.*;
 
 public class UnusedChecker2 {
     private String test;
