@@ -8,9 +8,10 @@ import utils.JavadocRemover;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -25,7 +26,7 @@ public class TestJavadocChecker{
         JavadocRemover jdr = new JavadocRemover();
         jdr.visit(cu, null);
     
-        LinkedList<Issue> issues = new LinkedList<>();
+        List<Issue> issues = new ArrayList<>();
         JavadocChecker jdc = new JavadocChecker(fileName);
         jdc.visit(cu, issues);
         

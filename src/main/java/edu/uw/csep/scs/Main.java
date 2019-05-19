@@ -51,7 +51,7 @@ public class Main {
 
         List<File> files = generateFileList(cmd.getOptionValue("i"));
 
-        List<Issue> issues = new ArrayList();
+        List<Issue> issues = new ArrayList<>();
 
         for (File file : files) {
             CompilationUnit compilationUnit;
