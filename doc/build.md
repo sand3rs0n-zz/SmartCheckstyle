@@ -24,3 +24,5 @@ Developer can runs all tests found from the src/test/java directory by using the
 ```bash 
 gradle clean test
 ```
+
+![](test_summary.png)
