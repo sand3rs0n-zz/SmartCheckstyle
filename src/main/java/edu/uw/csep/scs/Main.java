@@ -12,6 +12,7 @@ import checkers.JavadocChecker;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import models.Issue;
+import modifiers.JavadocModifier;
 import org.apache.commons.cli.*;
 
 
@@ -69,6 +70,11 @@ public class Main {
             if (cmd.hasOption("d")) {
                 DeclarationChecker declarationChecker = new DeclarationChecker(file.getName());
                 declarationChecker.visit(compilationUnit, issues);
+            }
+            
+            if (cmd.hasOption("m")) {
+                JavadocModifier javadocModifier = new JavadocModifier(file.getName());
+                javadocModifier.visit(compilationUnit, issues);
             }
         }
 

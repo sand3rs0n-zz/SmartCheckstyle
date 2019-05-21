@@ -20,7 +20,8 @@ public class Student {
     
     /**
      * Getter for student name.
-     * @return string
+     * second line description
+     * @return
      */
     public String getName() {
         return name;
