@@ -17,5 +17,12 @@ public class Student {
     public Student(String name) {
         this.name = name;
     }
-
+    
+    /**
+     * Getter for student name.
+     * @return string
+     */
+    public String getName() {
+        return name;
+    }
 }

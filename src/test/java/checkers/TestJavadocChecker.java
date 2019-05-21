@@ -26,12 +26,13 @@ public class TestJavadocChecker{
         JavadocRemover jdr = new JavadocRemover();
         jdr.visit(cu, null);
     
+        int removedDocsTotal = jdr.getRemovedDocsTotal();
         List<Issue> issues = new ArrayList<>();
         JavadocChecker jdc = new JavadocChecker(fileName);
         jdc.visit(cu, issues);
         
         Collections.sort(issues, Comparator.comparing(Issue::getLineNumber));
-        assertEquals(issues.size(), 1);
+        assertEquals(issues.size(), removedDocsTotal);
         for (Issue issue: issues) {
             System.out.println(issue);
         }
