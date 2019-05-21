@@ -49,8 +49,7 @@ public class JavadocModifier extends ModifierVisitor<List<Issue>> {
                     || tag.getType() == JavadocBlockTag.Type.DEPRECATED));
             if (missingJavadoc) {
                 issues.add(generateIssue(lineNumber, methodName
-                        + " Removing tag with no javadoc"));
-                System.out.println("Removed tag.");
+                        + " Removed tag with no javadoc"));
                 
             }
             return missingJavadoc;

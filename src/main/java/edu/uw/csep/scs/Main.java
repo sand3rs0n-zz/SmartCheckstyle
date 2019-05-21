@@ -1,7 +1,10 @@
 package edu.uw.csep.scs;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +21,7 @@ import org.apache.commons.cli.*;
 
 public class Main {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         
         Options options = new Options();
 
@@ -73,8 +76,14 @@ public class Main {
             }
             
             if (cmd.hasOption("m")) {
+                int cnt = issues.size();
                 JavadocModifier javadocModifier = new JavadocModifier(file.getName());
                 javadocModifier.visit(compilationUnit, issues);
+                if (issues.size() > cnt) {
+                    System.out.println("Overwriting " + file.getAbsolutePath());
+                    Files.write(Paths.get(file.getAbsolutePath()),
+                            compilationUnit.toString().getBytes());
+                }
             }
         }
 
