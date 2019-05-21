@@ -14,5 +14,15 @@ public class WhitespaceTestClass {
 
         return x;
     }
+
+    public int printN(int N) {
+        for    (int i=0; i < N; i++) {
+            try {
+                System.out.println(i);
+            } catch (Exception ex) {
+                // do nothing.
+            }
+        }
+    }
 }
 

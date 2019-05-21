@@ -1,13 +1,10 @@
 package checkers;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.stmt.CatchClause;
+import com.github.javaparser.ast.stmt.ForStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.github.javaparser.javadoc.Javadoc;
 import models.Issue;
 
 import java.io.BufferedReader;
@@ -15,7 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +20,8 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
     private String fileName;
     private String issueType = "WHITESPACE";
     private List<Integer> ifStmtLineNumbers = new ArrayList<>();
+    private List<Integer> forStmtLineNumbers = new ArrayList<>();
+    private List<Integer> catchStmtLineNumbers = new ArrayList<>();
 
     public WhitespaceChecker(String fileName) {
         this.fileName = fileName;
@@ -39,14 +37,23 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
 
         super.visit(n, issues);
 
-        int nextIfLineIdx = 0;
+        int nextIfLineIdx = 0, nextForLineIdx = 0, nextCatchIdx = 0;
         int curLineNumber = 1;
         try (BufferedReader br = new BufferedReader(new FileReader("source_to_parse/checkers"+this.fileName))) {
-            while (br.ready() && nextIfLineIdx < ifStmtLineNumbers.size()) {
+            while (br.ready()
+                    && (nextIfLineIdx < ifStmtLineNumbers.size()
+                        || nextForLineIdx < forStmtLineNumbers.size()
+                        || nextCatchIdx < catchStmtLineNumbers.size())) {
                 String line = br.readLine();
-                if (curLineNumber ==  ifStmtLineNumbers.get(nextIfLineIdx)) {
+                if (nextIfLineIdx < ifStmtLineNumbers.size() && curLineNumber ==  ifStmtLineNumbers.get(nextIfLineIdx)) {
                     validateIfStmt(line, curLineNumber);
                     nextIfLineIdx++;
+                } else if (nextForLineIdx < forStmtLineNumbers.size() && curLineNumber ==  forStmtLineNumbers.get(nextForLineIdx)) {
+                    validateForStmt(line, curLineNumber);
+                    nextForLineIdx++;
+                } else if (nextCatchIdx < catchStmtLineNumbers.size() && curLineNumber ==  catchStmtLineNumbers.get(nextCatchIdx)) {
+                    validateCatchStmt(line, curLineNumber);
+                    nextCatchIdx++;
                 }
 
                 curLineNumber++;
@@ -62,22 +69,85 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
         ifStmtLineNumbers.add(n.getRange().get().begin.line);
     }
 
+    @Override
+    public void visit(ForStmt n, List<Issue> issues) {
+        super.visit(n, issues);
+        forStmtLineNumbers.add(n.getRange().get().begin.line);
+    }
+
+    @Override
+    public void visit(CatchClause n, List<Issue> issues) {
+        super.visit(n, issues);
+        catchStmtLineNumbers.add(n.getRange().get().begin.line);
+    }
+
     private void validateIfStmt(String ifBlock, int line) {
-        int numWhitespaces = 0;
         Pattern whitespace = Pattern.compile(".*if\\s[(].*");
         Matcher matcher = whitespace.matcher(ifBlock);
         if (matcher.find()) {
-            numWhitespaces = 1;
             return;
         }
 
         Pattern multiWhitespace = Pattern.compile(".*if\\s\\s+[(].*");
         matcher = multiWhitespace.matcher(ifBlock);
         if (matcher.find()) {
-            System.out.println("[Line: " + line + "] if statement has multiple whitespace.");
+            System.out.println("[Line: " + line + "] if statement has multiple whitespace before (.");
             return;
         }
 
-        System.out.println("[Line: " + line + "] if statement is missing whitespace.");
+        System.out.println("[Line: " + line + "] if statement is missing whitespace before (.");
+    }
+
+    private void validateForStmt(String forBlock, int line) {
+        Pattern whitespace = Pattern.compile(".*for\\s[(].*");
+        Matcher matcher = whitespace.matcher(forBlock);
+        if (matcher.find()) {
+            return;
+        }
+
+        Pattern multiWhitespace = Pattern.compile(".*for\\s\\s+[(].*");
+        matcher = multiWhitespace.matcher(forBlock);
+        if (matcher.find()) {
+            System.out.println("[Line: " + line + "] for statement has multiple whitespace before (.");
+            return;
+        }
+
+        System.out.println("[Line: " + line + "] for statement is missing whitespace before (.");
+    }
+
+    private void validateCatchStmt(String catchBlock, int line) {
+        Pattern whitespace = Pattern.compile(".*\\}\\scatch\\s[(].*");
+        Matcher matcher = whitespace.matcher(catchBlock);
+        if (matcher.find()) {
+            return;
+        }
+
+        Pattern multiWhitespace = Pattern.compile(".*catch\\s\\s+[(].*");
+        matcher = multiWhitespace.matcher(catchBlock);
+        if (matcher.find()) {
+            System.out.println("[Line: " + line + "] catch statement has multiple whitespace before (.");
+            return;
+        }
+
+        Pattern missingWhitespace = Pattern.compile(".*catch[(].*");
+        matcher = missingWhitespace.matcher(catchBlock);
+        if (matcher.find()) {
+            System.out.println("[Line: " + line + "] catch statement is missing whitespace before (.");
+            return;
+        }
+
+        Pattern missingWhitespaceAtStart = Pattern.compile(".*\\}[catch(].*");
+        matcher = missingWhitespaceAtStart.matcher(catchBlock);
+        if (matcher.find()) {
+            System.out.println("[Line: " + line + "] catch statement is missing whitespace after {.");
+            return;
+        }
+
+        Pattern multiWhitespaceAtStart = Pattern.compile(".*\\}\\s\\s+[catch(].*");
+        matcher = multiWhitespaceAtStart.matcher(catchBlock);
+        if (matcher.find()) {
+            System.out.println("[Line: " + line + "] catch statement has multiple whitespace after {.");
+            return;
+        }
     }
 }
