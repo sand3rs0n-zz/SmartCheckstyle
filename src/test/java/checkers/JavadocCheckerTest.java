@@ -15,7 +15,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class TestJavadocChecker{
+public class JavadocCheckerTest{
     
     @Test
     public void testNoJavaDocInPublicClass() throws FileNotFoundException {
