@@ -19,9 +19,7 @@ import java.util.List;
 
 public class UnusedChecker {
 
-    public void checkUnusedImports(File projectDir) {
-        new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
-            System.out.println(path);
+    public void checkUnusedImports(File file) {
 
             try {
                 CompilationUnit cu = JavaParser.parse(file);
@@ -82,8 +80,6 @@ public class UnusedChecker {
             } catch (IOException e) {
                 new RuntimeException(e);
             }
-            System.out.println(Strings.repeat("=", path.length()));
-        }).explore(projectDir);
     }
 
     public  NodeList<ClassOrInterfaceType> findChildClasses(Node child, NodeList<ClassOrInterfaceType> classes){

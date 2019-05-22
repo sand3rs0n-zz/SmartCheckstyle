@@ -10,10 +10,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import checkers.DeclarationChecker;
-import checkers.JavadocChecker;
+import checkers.*;
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
+import jdk.nashorn.internal.runtime.options.Option;
+import jdk.nashorn.internal.runtime.options.Options;
 import models.Issue;
 import modifiers.JavadocModifier;
 import org.apache.commons.cli.*;
@@ -84,6 +86,23 @@ public class Main {
                     Files.write(Paths.get(file.getAbsolutePath()),
                             compilationUnit.toString().getBytes());
                 }
+            }
+
+            // imports
+            if (cmd.hasOption("im")) {
+                UnusedChecker importChecker = new UnusedChecker();
+                importChecker.checkUnusedImports(file);
+            }
+
+            // methods
+            if (cmd.hasOption('m')) {
+                UnusedMethodChecker methodChecker = new UnusedMethodChecker();
+                methodChecker.checkUnusedMethods(file);
+            }
+
+            if (cmd.hasOption('v')) {
+                UnusedVariableChecker variableChecker = new UnusedVariableChecker();
+                variableChecker.checkUnusedVariables(file);
             }
         }
 

@@ -8,7 +8,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.google.common.base.Strings;
-import me.tomassetti.support.DirExplorer;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,9 +15,7 @@ import java.util.List;
 
 public class UnusedMethodChecker {
 
-    public void checkUnusedMethods(File projectDir) {
-        new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
-            System.out.println(path);
+    public void checkUnusedMethods(File file) {
 
             try {
                 CompilationUnit cu =  JavaParser.parse(file);
@@ -67,8 +64,6 @@ public class UnusedMethodChecker {
             } catch(IOException e) {
                 new RuntimeException(e);
             }
-            System.out.println(Strings.repeat("=", path.length()));
-        }).explore(projectDir);
     }
 
     public NodeList<MethodDeclaration> findChildMethods(Node cu, NodeList<MethodDeclaration> methods) {

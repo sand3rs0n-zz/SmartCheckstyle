@@ -16,9 +16,7 @@ import java.util.List;
 
 public class UnusedVariableChecker {
 
-    public void checkUnusedVariables(File projectDir) {
-        new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
-            System.out.println(path);
+    public void checkUnusedVariables(File file) {
 
             try {
                 CompilationUnit cu =  JavaParser.parse(file);
@@ -66,8 +64,6 @@ public class UnusedVariableChecker {
             } catch(IOException e) {
                 new RuntimeException(e);
             }
-            System.out.println(Strings.repeat("=", path.length()));
-        }).explore(projectDir);
     }
 
     public NodeList<VariableDeclarator> findChildVariables(Node n, NodeList<VariableDeclarator> variables){
