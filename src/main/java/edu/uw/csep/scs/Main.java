@@ -10,12 +10,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import checkers.*;
+import checkers.DeclarationChecker;
+import checkers.JavadocChecker;
+import checkers.UnusedChecker;
+import checkers.UnusedMethodChecker;
+import checkers.UnusedVariableChecker;
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
-import jdk.nashorn.internal.runtime.options.Option;
-import jdk.nashorn.internal.runtime.options.Options;
 import models.Issue;
 import modifiers.JavadocModifier;
 import org.apache.commons.cli.*;
