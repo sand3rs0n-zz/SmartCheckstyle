@@ -79,19 +79,20 @@ public class Main {
             } catch (Exception e) {
                 return;
             }
-
+            
+            // javadoc
             if (cmd.hasOption("j")) {
                 JavadocChecker javadocChecker = new JavadocChecker(file.getName());
                 javadocChecker.visit(compilationUnit, issues);
 
-                if (cmd.hasOption("r")) {
-                    int cnt = issues.size();
+                if (cmd.hasOption("m")) {
+                    List<Issue> javadocIssues = new ArrayList<>();
                     JavadocModifier javadocModifier = new JavadocModifier(file.getName());
-                    javadocModifier.visit(compilationUnit, issues);
-                    if (issues.size() > cnt) {
-                        System.out.println("Overwriting " + file.getAbsolutePath());
+                    javadocModifier.visit(compilationUnit, javadocIssues);
+                    if (javadocIssues.size() > 0) {
                         Files.write(Paths.get(file.getAbsolutePath()),
                                 compilationUnit.toString().getBytes());
+                        issues.addAll(javadocIssues);
                     }
                 }
             }

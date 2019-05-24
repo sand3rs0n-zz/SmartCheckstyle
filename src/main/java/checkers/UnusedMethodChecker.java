@@ -53,7 +53,6 @@ public class UnusedMethodChecker {
             MethodDeclaration m = allMethods.get(i);
             for (int j = 0; j < usedMethods.size(); j++){
                 MethodCallExpr used = usedMethods.get(j);
-                System.out.println(used.getName());
                 if (m.getName().equals(used.getName())){
                     usedDeclarations.add(m);
                     break;
