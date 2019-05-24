@@ -68,6 +68,17 @@ public class Main {
             if (cmd.hasOption("j")) {
                 JavadocChecker javadocChecker = new JavadocChecker(file.getName());
                 javadocChecker.visit(compilationUnit, issues);
+    
+                if (cmd.hasOption("m")) {
+                    int cnt = issues.size();
+                    JavadocModifier javadocModifier = new JavadocModifier(file.getName());
+                    javadocModifier.visit(compilationUnit, issues);
+                    if (issues.size() > cnt) {
+                        System.out.println("Overwriting " + file.getAbsolutePath());
+                        Files.write(Paths.get(file.getAbsolutePath()),
+                                compilationUnit.toString().getBytes());
+                    }
+                }
             }
 
             if (cmd.hasOption("d")) {
@@ -75,16 +86,7 @@ public class Main {
                 declarationChecker.visit(compilationUnit, issues);
             }
             
-            if (cmd.hasOption("m")) {
-                int cnt = issues.size();
-                JavadocModifier javadocModifier = new JavadocModifier(file.getName());
-                javadocModifier.visit(compilationUnit, issues);
-                if (issues.size() > cnt) {
-                    System.out.println("Overwriting " + file.getAbsolutePath());
-                    Files.write(Paths.get(file.getAbsolutePath()),
-                            compilationUnit.toString().getBytes());
-                }
-            }
+            
         }
 
         Collections.sort(issues, Comparator.comparing(Issue::getPackageName)
