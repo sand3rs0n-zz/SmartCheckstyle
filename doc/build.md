@@ -26,3 +26,11 @@ gradle clean test
 ```
 
 ![](test_summary.png)
+
+## Contributions
+
+### Pattern
+
+### Test Automation
+
+### Debugging
