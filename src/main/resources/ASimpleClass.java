@@ -3,7 +3,8 @@ package me.tomassetti.examples;
 public class ASimpleClass {
 
     boolean aField;
-    int ThiandField;
+
+    int ThisandField;
 
     public ASimpleClass(boolean aField) {
         this.aField = aField;

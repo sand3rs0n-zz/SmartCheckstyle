@@ -1,69 +1,92 @@
 package checkers;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.SimpleName;
-import com.google.common.base.Strings;
+import models.Issue;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class UnusedMethodChecker {
 
-    public void checkUnusedMethods(File file) {
+    private String packageName;
+    private String fileName;
+    private final static String ISSUE_TYPE = "METHOD_CHECKER";
 
-            try {
-                CompilationUnit cu =  JavaParser.parse(file);
-                NodeList<MethodDeclaration> allMethods= new NodeList<>();
-                List<Node> children = cu.getChildNodes();
-                for (int i = 0; i < children.size(); i++) {
-                    NodeList<MethodDeclaration> m = findChildMethods(children.get(i), allMethods);
-                    for (int j = 0; j < m.size(); j++){
-                        if (!checkContains(m.get(j).getName(), allMethods)) {
-                            allMethods.add(m.get(j));
-                        }
-                    }
+    public UnusedMethodChecker(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void handleUnusedMethods(CompilationUnit cu, List<Issue> issues, boolean modify) {
+        if (cu.getPackageDeclaration().isPresent()) {
+            this.packageName = cu.getPackageDeclaration().get().getNameAsString().trim();
+        } else {
+            this.packageName = "N/A";
+        }
+
+        NodeList<MethodDeclaration> allMethods= new NodeList<>();
+        List<Node> children = cu.getChildNodes();
+        for (int i = 0; i < children.size(); i++) {
+            NodeList<MethodDeclaration> m = findChildMethods(children.get(i), allMethods);
+            for (int j = 0; j < m.size(); j++){
+                if (!checkContains(m.get(j).getName(), allMethods)) {
+                    allMethods.add(m.get(j));
                 }
-
-                NodeList<MethodCallExpr> usedMethods = new NodeList<>();
-                for (int i = 0; i < children.size(); i++){
-                    NodeList<MethodCallExpr> m = findUsedMethods(children.get(i), usedMethods);
-                    for (int j = 0; j < m.size(); j++){
-
-                        if (!checkContainsInCalls(m.get(j).getName(), usedMethods)) { usedMethods.add(m.get(j));}
-                    }
-                }
-
-                NodeList<MethodDeclaration> usedDeclarations = new NodeList<>();
-                for (int i = 0; i < allMethods.size(); i++){
-                    MethodDeclaration m = allMethods.get(i);
-                    for (int j = 0; j < usedMethods.size(); j++){
-                        MethodCallExpr used = usedMethods.get(j);
-                        System.out.println(used.getName());
-                        if (m.getName().equals(used.getName())){
-                            usedDeclarations.add(m);
-                            break;
-                        }
-                    }
-                }
-
-                allMethods.removeAll(usedDeclarations);
-                for (int i = 0; i < allMethods.size(); i++) {
-                    MethodDeclaration unused = allMethods.get(i);
-                    if (!unused.getName().equals("main")){
-                        System.out.println("Method " + unused.getName() + " is not used, please remove");
-                    }
-                }
-                System.out.println("Completed Document");
-
-            } catch(IOException e) {
-                new RuntimeException(e);
             }
+        }
+
+        NodeList<MethodCallExpr> usedMethods = new NodeList<>();
+        for (int i = 0; i < children.size(); i++){
+            NodeList<MethodCallExpr> m = findUsedMethods(children.get(i), usedMethods);
+            for (int j = 0; j < m.size(); j++){
+
+                if (!checkContainsInCalls(m.get(j).getName(), usedMethods)) { usedMethods.add(m.get(j));}
+            }
+        }
+
+        NodeList<MethodDeclaration> usedDeclarations = new NodeList<>();
+        for (int i = 0; i < allMethods.size(); i++){
+            MethodDeclaration m = allMethods.get(i);
+            for (int j = 0; j < usedMethods.size(); j++){
+                MethodCallExpr used = usedMethods.get(j);
+                System.out.println(used.getName());
+                if (m.getName().equals(used.getName())){
+                    usedDeclarations.add(m);
+                    break;
+                }
+            }
+        }
+
+        allMethods.removeAll(usedDeclarations);
+        for (int i = 0; i < allMethods.size(); i++) {
+            MethodDeclaration unused = allMethods.get(i);
+            int lineNumber = unused.getRange().get().begin.line;
+            if (!unused.getName().equals("main")) {
+                String errorMessage = "Method " + unused.getName() + " is not used, please remove.";
+                issues.add(generateIssue(lineNumber, errorMessage));
+
+                if (modify) {
+                    NodeList<BodyDeclaration<?>> newDeclarations = new NodeList<>();
+
+                    for (BodyDeclaration declaration : cu.getTypes().get(0).getMembers()) {
+                        if (declaration instanceof MethodDeclaration) {
+                            MethodDeclaration mDec = (MethodDeclaration) declaration;
+                            if (!mDec.equals(unused)) {
+                                newDeclarations.add(mDec);
+                            }
+                        } else {
+                            newDeclarations.add(declaration);
+                        }
+                    }
+
+                    cu.getTypes().get(0).setMembers(newDeclarations);
+                }
+            }
+        }
     }
 
     public NodeList<MethodDeclaration> findChildMethods(Node cu, NodeList<MethodDeclaration> methods) {
@@ -113,5 +136,9 @@ public class UnusedMethodChecker {
             }
         }
         return false;
+    }
+
+    private Issue generateIssue(int lineNumber, String errMessage) {
+        return new Issue(packageName, fileName, lineNumber, ISSUE_TYPE, errMessage);
     }
 }
