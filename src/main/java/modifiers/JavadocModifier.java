@@ -1,7 +1,10 @@
 package modifiers;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.Visitable;
 import com.github.javaparser.javadoc.Javadoc;
@@ -39,7 +42,8 @@ public class JavadocModifier extends ModifierVisitor<List<Issue>> {
         
         if (!n.getJavadoc().isPresent())
             return super.visit(n, issues);
-    
+        
+        int prevIssueCnt = issues.size();
         List<JavadocBlockTag> blockTags = n.getJavadoc().get().getBlockTags();
         blockTags.removeIf(tag -> {
             boolean missingJavadoc = (tag.getContent().isEmpty()
@@ -50,22 +54,35 @@ public class JavadocModifier extends ModifierVisitor<List<Issue>> {
             if (missingJavadoc) {
                 issues.add(generateIssue(lineNumber, methodName
                         + " Removed tag with no javadoc"));
-                
             }
             return missingJavadoc;
         });
         
-        JavadocDescription content = n.getJavadoc().get().getDescription();
-        Javadoc javadoc = new Javadoc(content);
-        for (JavadocBlockTag blocktag: blockTags) {
-            javadoc.addBlockTag(blocktag);
+        if (issues.size() > prevIssueCnt) {
+            JavadocDescription content = n.getJavadoc().get().getDescription();
+            Javadoc javadoc = new Javadoc(content);
+            for (JavadocBlockTag blocktag: blockTags) {
+                javadoc.addBlockTag(blocktag);
+            }
+    
+            n.setJavadocComment(getIndentation(n), javadoc);
+    
         }
-        n.setJavadocComment("    ", javadoc);
         
         return super.visit(n, issues);
     }
 
     private Issue generateIssue(int lineNumber, String errMessage) {
         return new Issue(packageName, fileName, lineNumber, ISSUE_TYPE, errMessage);
+    }
+    
+    private String getIndentation(Node n) {
+        int cnt = n.getRange().get().begin.column;
+        StringBuilder sb = new StringBuilder();
+        while (cnt > 1) {
+            sb.append(" ");
+            cnt -= 1;
+        }
+        return sb.toString();
     }
 }
