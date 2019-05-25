@@ -16,11 +16,11 @@
 
 3. Checkers/modifiers get triggered based on the arguments, and they will print out the errors sorted by package name, file name, and line number.
 
-## New Features
+## Adding New Features
 
 A developer can extend existing capabilities and also add new checker or modifiers.
 
-### Adding new checker/modifier.
+### New a checker/modifier
 
 1. Create a new checker class in ```src/main/java/checkers (or modifiers)``` folder.
    ```java
@@ -52,13 +52,21 @@ A developer can extend existing capabilities and also add new checker or modifie
     }
    ```
 
-### Integration to main interface
+### Integration and Error Aggregation
 
-A developer also needs to integrate the new checker/modifier in the main function defining a new argument.
+1. A developer also needs to integrate the new checker/modifier in the main function defining a new argument.
+2. There would be a various way of aggregate style errors. In this project, we pass the reference to the collection of Issue objects when checker/modifier visits nodes. 
+
+    ```java
+    List<Issue> issues = new ArrayList<>();
+    // ...
+    JavadocChecker javadocChecker = new JavadocChecker(file.getName());
+    javadocChecker.visit(compilationUnit, issues);
+    ```
 
 ## Test
 
-### Debugging and testing checker/modifier
+### Debugging and testing a checker/modifier
 
 1. Manual testing
    The quick and easy way to test new checker/modifier is to create/find a java file with style error manually.  It forces the java parser to construct the CompilationUnit with the style error. This approach is useful at the beginning of implementation as a developer can learn the APIs and study the feasibility of style check. However, as the code gets mature or a developer gets used to the APIs, it would be demanded to utilize the test automation infrastructures
@@ -94,7 +102,7 @@ A developer also needs to integrate the new checker/modifier in the main functio
             CompilationUnit cu = JavaParser.parse(new File(fileName));
             JavadocRemover jdr = new JavadocRemover();
             jdr.visit(cu, null);
-	    int cntRemoved = jdr.getJavadocRemovalCount();
+        int cntRemoved = jdr.getJavadocRemovalCount();
             // assert it with the number of issues found by JavadocChecker.
     
     ```
