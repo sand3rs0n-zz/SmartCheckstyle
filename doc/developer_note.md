@@ -16,11 +16,11 @@
 
 3. Checkers/modifiers get triggered based on the arguments, and they will print out the errors sorted by package name, file name, and line number.
 
-## Adding New Features
+## Adding A New Feature
 
-A developer can extend existing capabilities and also add new checker or modifiers.
+A developer can extend existing capabilities by adding a new checker or modifier. Extending an existing visitor from java parser library is the easiest way of implementing a new feature.  Assuming that there is direct access to AST, a developer can focus on design and implement behavior (what to check/modify) specific to a node.
 
-### New a checker/modifier
+### New Checker/Modifier
 
 1. Create a new checker class in ```src/main/java/checkers (or modifiers)``` folder.
    ```java
