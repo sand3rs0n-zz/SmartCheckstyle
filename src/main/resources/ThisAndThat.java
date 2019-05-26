@@ -3,14 +3,13 @@ package me.tomassetti.examples;
 public class ThisAndThat {
 
     boolean orField;
-    boolean andField;
-    int countThisAndThat;
+    boolean ThisorField;
 
     public ThisAndThat(boolean orField) {
         this.orField = orField;
     }
 
-    public boolean getOrField() {
-        return orField;
+    public void setOrField(boolean orField) {
+        this.orField = orField;
     }
 }

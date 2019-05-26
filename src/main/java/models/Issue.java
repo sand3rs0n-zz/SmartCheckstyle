@@ -30,6 +30,8 @@ public class Issue {
         return this.lineNumber;
     }
     
+    public String getErrMessage() { return this.errMessage; }
+    
     @Override
     public String toString() {
         return packageName + " | " + fileName + " | " + "line: " + lineNumber

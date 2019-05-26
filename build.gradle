@@ -1,4 +1,4 @@
-group 'tomassetti.me'
+group 'edu.uw.csep.scs'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'

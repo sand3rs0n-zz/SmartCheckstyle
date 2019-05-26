@@ -1,10 +1,7 @@
 package checkers;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.javadoc.Javadoc;
@@ -56,6 +53,21 @@ public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
         }
     }
 
+    @Override
+    public void visit(ConstructorDeclaration n, List<Issue> issues) {
+        super.visit(n, issues);
+        if (n.isPrivate())
+            return;
+        int lineNumber = n.getRange().get().begin.line;
+        String constName = n.getNameAsString();
+    
+        if (!n.hasJavaDocComment()) {
+            issues.add(generateIssue(lineNumber, "Public constructor, "
+                    + constName + ", is missing javadoc."));
+        
+        }
+    }
+    
     @Override
     public void visit(MethodDeclaration n, List<Issue> issues) {
 
