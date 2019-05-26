@@ -32,13 +32,19 @@
   * variable/method name checking (Steven)
   * Documentation for public methods (Jae)
 
-* Collector Model (TBD)
-  * Object passed to checkers
+* Collector Model
+  * Object passed to checkers (model/Issue)
   
-* Auto-update (TBD)
-  * Fix improper indenting
+* Auto-update
+  * Fix improper indenting (Steven)
+  * Update javadoc (Jae)
 
 * Main.java
+
+## Documents
+* User Document
+* Developr Document - ![developer document](doc/developer_note.md)
+* Evaluation Document
 
 ### References:
 * https://javaparser.org/
