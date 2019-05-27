@@ -13,7 +13,7 @@ import java.util.Set;
 public class NewLineChecker extends VoidVisitorAdapter<List<Issue>> {
     private String packageName;
     private String fileName;
-    private String issueType = "NEWLINE";
+    private String ISSUE_TYPE = "NEWLINE";
 
     public NewLineChecker(String fileName) {
         this.fileName = fileName;
@@ -34,12 +34,15 @@ public class NewLineChecker extends VoidVisitorAdapter<List<Issue>> {
         for (ImportDeclaration id : imports) {
             int line = id.getRange().get().begin.line;
             if (importLines.contains(line)) {
-                System.out.println("[Line: " + line + "] Place import "
-                        + id.getNameAsString() + " in a new line.");
+                issues.add (generateIssue(line,"] Place import " + id.getNameAsString() + " in a new line."));
             }
             else {
                 importLines.add(line);
             }
         }
+    }
+
+    private Issue generateIssue(int lineNumber, String errMessage) {
+        return new Issue(packageName, fileName, lineNumber, ISSUE_TYPE, errMessage);
     }
 }

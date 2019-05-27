@@ -10,11 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import checkers.DeclarationChecker;
-import checkers.JavadocChecker;
-import checkers.UnusedImportChecker;
-import checkers.UnusedMethodChecker;
-import checkers.UnusedVariableChecker;
+import checkers.*;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -54,6 +50,11 @@ public class Main {
         Option checkVariables = new Option("va",false,"check unused variables");
         options.addOption(checkVariables);
 
+        Option checkWhitespaces = new Option("ws",false,"check whitespaces");
+        options.addOption(checkWhitespaces);
+
+        Option checkNewlines = new Option("n",false,"check new lines");
+        options.addOption(checkNewlines);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -97,6 +98,7 @@ public class Main {
                 }
             }
 
+            // declarations
             if (cmd.hasOption("d")) {
                 DeclarationChecker declarationChecker = new DeclarationChecker(file.getName());
                 declarationChecker.visit(compilationUnit, issues);
@@ -140,6 +142,21 @@ public class Main {
                 }
             }
 
+            // whitespaces
+            if (cmd.hasOption("ws")) {
+                WhitespaceChecker whitespaceChecker = new WhitespaceChecker(file.getName());
+                List<Issue> whitespaceIssues = new ArrayList<>();
+                whitespaceChecker.visit(compilationUnit, whitespaceIssues);
+                issues.addAll(whitespaceIssues);
+            }
+
+            // new lines
+            if (cmd.hasOption("n")) {
+                NewLineChecker newLineChecker = new NewLineChecker(file.getName());
+                List<Issue> variableIssues = new ArrayList<>();
+                newLineChecker.visit(compilationUnit, variableIssues);
+                issues.addAll(variableIssues);
+            }
         }
 
         Collections.sort(issues, Comparator.comparing(Issue::getPackageName)
