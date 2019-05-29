@@ -43,7 +43,7 @@
 
 ## Documents
 * User Document
-* Developr Document - ![developer document](doc/developer_note.md)
+* Developer Document - ![developer document](doc/developer_note.md)
 * Evaluation Document
 
 ### References:
