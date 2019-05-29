@@ -18,13 +18,15 @@ import java.util.regex.Pattern;
 public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
     private String packageName;
     private String fileName;
+    private String filePath;
     private String ISSUE_TYPE = "WHITESPACE";
     private List<Integer> ifStmtLineNumbers = new ArrayList<>();
     private List<Integer> forStmtLineNumbers = new ArrayList<>();
     private List<Integer> catchStmtLineNumbers = new ArrayList<>();
 
-    public WhitespaceChecker(String fileName) {
+    public WhitespaceChecker(String fileName, String filePath) {
         this.fileName = fileName;
+        this.filePath = filePath;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
 
         int nextIfLineIdx = 0, nextForLineIdx = 0, nextCatchIdx = 0;
         int curLineNumber = 1;
-        try (BufferedReader br = new BufferedReader(new FileReader("source_to_parse/checkers/"+this.fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
             while (br.ready()
                     && (nextIfLineIdx < ifStmtLineNumbers.size()
                         || nextForLineIdx < forStmtLineNumbers.size()

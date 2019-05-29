@@ -144,7 +144,7 @@ public class Main {
 
             // whitespaces
             if (cmd.hasOption("ws")) {
-                WhitespaceChecker whitespaceChecker = new WhitespaceChecker(file.getName());
+                WhitespaceChecker whitespaceChecker = new WhitespaceChecker(file.getName(), file.getPath());
                 List<Issue> whitespaceIssues = new ArrayList<>();
                 whitespaceChecker.visit(compilationUnit, whitespaceIssues);
                 issues.addAll(whitespaceIssues);

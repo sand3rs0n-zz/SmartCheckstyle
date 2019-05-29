@@ -18,7 +18,7 @@ public class WhitespaceMain {
             System.out.println(path);
 
             try {
-                WhitespaceChecker wChecker = new WhitespaceChecker(path);
+                WhitespaceChecker wChecker = new WhitespaceChecker(file.getName(), path);
                 wChecker.visit(JavaParser.parse(file), issues);
             } catch (IOException e) {
                 new RuntimeException(e);
