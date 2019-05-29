@@ -64,7 +64,7 @@ public class UnusedMethodChecker {
         for (int i = 0; i < allMethods.size(); i++) {
             MethodDeclaration unused = allMethods.get(i);
             int lineNumber = unused.getRange().get().begin.line;
-            if (!unused.getName().equals("main")) {
+            if (!unused.getName().getIdentifier().equals("main")) {
                 String errorMessage = "Method " + unused.getName() + " is not used, please remove.";
                 issues.add(generateIssue(lineNumber, errorMessage));
 
