@@ -72,8 +72,15 @@ public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
     public void visit(MethodDeclaration n, List<Issue> issues) {
 
         super.visit(n, issues);
-        if (n.isPrivate())
+        if (!((n.isPublic()) || (n.isProtected())))
             return;
+
+        if (n.getAnnotations().size() > 0) {
+            if ((n.isAnnotationPresent("Override"))
+                    || (n.isAnnotationPresent("SuppressWarnings"))) {
+                return;
+            }
+        }
 
         int lineNumber = n.getRange().get().begin.line;
         String methodName = n.getNameAsString();
