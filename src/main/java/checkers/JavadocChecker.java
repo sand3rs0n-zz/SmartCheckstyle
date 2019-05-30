@@ -92,7 +92,7 @@ public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
             
             if (n.getJavadoc().get().getDescription().isEmpty()) {
                 issues.add(generateIssue(lineNumber, "Non-private method, "
-                        + methodName + ", is missing javadoc."));
+                        + methodName + ", is missing description."));
             }
 
             if (n.getJavadoc().get().getBlockTags().size() < n.getParameters().size()) {
