@@ -17,6 +17,8 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import models.Issue;
 import modifiers.ImportModifier;
 import modifiers.JavadocModifier;
+import mutation.ErrorAnalyzer;
+import mutation.TagIterator;
 import org.apache.commons.cli.*;
 
 
@@ -55,7 +57,10 @@ public class Main {
 
         Option checkNewlines = new Option("n",false,"check new lines");
         options.addOption(checkNewlines);
-
+    
+        Option report = new Option("r",true,"a path to report directory");
+        options.addOption(report);
+        
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
@@ -78,6 +83,8 @@ public class Main {
             try {
                 compilationUnit = JavaParser.parse(file);
             } catch (Exception e) {
+                System.out.println("Parsing exception " + e.getMessage());
+                System.out.println(file.getAbsolutePath());
                 return;
             }
             
@@ -166,8 +173,25 @@ public class Main {
         for (Issue issue : issues) {
             System.out.println(issue);
         }
+    
+        if (cmd.hasOption("r") && TagIterator.isGitRepo(cmd.getOptionValue("i"))) {
+            String reportPath = cmd.getOptionValue("r");
+            String commitId = TagIterator.getRecentCommitId(reportPath);
+            appendSummary(Paths.get(reportPath, "report.csv").toString(), issues, commitId);
+        }
     }
 
+    private static void appendSummary(String filePath, List<Issue> issues, String commitId) {
+        
+        try {
+            ErrorAnalyzer.appendRecord(filePath, issues, commitId);
+        }
+        catch (IOException e) {
+            System.out.println("Failed to create summary " + e.getMessage());
+            }
+        
+    }
+    
     private static List<File> generateFileList(String rootPath) {
         List<File> files = new ArrayList<>();
         File rootDirFile = new File(rootPath);
