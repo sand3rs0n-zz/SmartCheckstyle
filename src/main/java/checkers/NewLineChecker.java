@@ -22,7 +22,7 @@ public class NewLineChecker extends VoidVisitorAdapter<List<Issue>> {
     @Override
     public void visit(CompilationUnit n, List<Issue> issues) {
         if (n.getPackageDeclaration().isPresent()) {
-            this.packageName = n.getPackageDeclaration().toString();
+            this.packageName = n.getPackageDeclaration().get().getNameAsString().trim();
         } else {
             this.packageName = "N/A";
         }
@@ -34,7 +34,7 @@ public class NewLineChecker extends VoidVisitorAdapter<List<Issue>> {
         for (ImportDeclaration id : imports) {
             int line = id.getRange().get().begin.line;
             if (importLines.contains(line)) {
-                issues.add (generateIssue(line,"] Place import " + id.getNameAsString() + " in a new line."));
+                issues.add (generateIssue(line,"Place import " + id.getNameAsString() + " in a new line."));
             }
             else {
                 importLines.add(line);
