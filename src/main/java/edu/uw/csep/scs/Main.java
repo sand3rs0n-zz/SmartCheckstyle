@@ -1,5 +1,17 @@
 package edu.uw.csep.scs;
 
+import checkers.*;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import models.Issue;
+import models.Metrics;
+import modifiers.ImportModifier;
+import modifiers.JavadocModifier;
+import mutation.Commit;
+import mutation.ErrorRecorder;
+import mutation.GitUtils;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,17 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import checkers.*;
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import models.Issue;
-import modifiers.ImportModifier;
-import modifiers.JavadocModifier;
-import mutation.Commit;
-import mutation.ErrorRecorder;
-import mutation.GitUtils;
-import org.apache.commons.cli.*;
 
 
 public class Main {
@@ -78,6 +79,8 @@ public class Main {
 
         List<Issue> issues = new ArrayList<>();
 
+        Metrics metrics = new Metrics();
+        long startTime = System.currentTimeMillis();
         for (File file : files) {
             CompilationUnit compilationUnit;
             try {
@@ -88,6 +91,9 @@ public class Main {
                 return;
             }
             
+            // code metrics
+            NodeCounter nodeCounter = new NodeCounter();
+            nodeCounter.visit(compilationUnit, metrics);
             // javadoc
             if (cmd.hasOption("j")) {
                 JavadocChecker javadocChecker = new JavadocChecker(file.getName());
@@ -161,7 +167,7 @@ public class Main {
                 newLineChecker.visit(compilationUnit, issues);
             }
         }
-
+    
         Collections.sort(issues, Comparator.comparing(Issue::getPackageName)
                 .thenComparing(Issue::getFileName)
                 .thenComparing(Issue::getLineNumber));
@@ -169,6 +175,11 @@ public class Main {
         for (Issue issue : issues) {
             System.out.println(issue);
         }
+    
+    
+        long estimatedTime = System.currentTimeMillis() - startTime;
+        metrics.setAnalysisInMilliseconds(estimatedTime);
+        System.out.println(metrics);
     
         if (cmd.hasOption("r") && GitUtils.isGitRepo(cmd.getOptionValue("i"))) {
             
@@ -179,6 +190,7 @@ public class Main {
             if (commit == null) {
                 System.out.println("Failed to find HEAD on the input directory.");
             } else {
+                commit.setMetrics(metrics);
                 appendSummary(Paths.get(reportPath, "report.csv").toAbsolutePath().toString(),
                         issues, commit);
             }

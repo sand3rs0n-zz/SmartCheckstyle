@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ErrorRecorder {
@@ -22,11 +23,21 @@ public class ErrorRecorder {
         logHeader.add("Git Repo.");
         logHeader.add("Commit");
         logHeader.add("Timestamp");
+        logHeader.add("AnalysisInSeconds");
+        logHeader.add("NumClasses");
+        logHeader.add("NumMethods");
+        logHeader.add("NumLines");
         
         StringJoiner logRecord = new StringJoiner(",");
         logRecord.add(commit.getRepoName());
         logRecord.add(commit.getCommitId());
         logRecord.add(String.valueOf(commit.getCommitTime()));
+        String analysisInSeconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(
+                commit.getMetrics().getAnalysisInMilliseconds()));
+        logRecord.add(analysisInSeconds);
+        logRecord.add(String.valueOf(commit.getMetrics().getNumClasses()));
+        logRecord.add(String.valueOf(commit.getMetrics().getNumMethods()));
+        logRecord.add(String.valueOf(commit.getMetrics().getNumLines()));
         
         errorCntsByType.forEach((k, v) -> {
                     logHeader.add(k);
