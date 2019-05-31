@@ -16,6 +16,21 @@
 
 3. Checkers/modifiers get triggered based on the arguments, and they will print out the errors sorted by package name, file name, and line number.
 
+    ```bash
+    usage: ls [-d] [-h] [-i <arg>] [-im] [-j] [-m] [-md] [-n] [-r <arg>] [-va] [-ws]
+        -d          check declarations style
+        -h          options
+        -i <arg>    input root directory or file path
+        -im         check unused imports
+        -j          check javadoc style
+        -m          modify files
+        -md         check unused methods
+        -n          check new lines
+        -r <arg>    generate error count report in a directory
+        -va         check unused variables
+        -ws         check whitespaces
+
+    ```
 ## Adding A New Feature
 
 A developer can extend existing capabilities by adding a new checker or modifier. Extending an existing visitor from java parser library is the easiest way of implementing a new feature.  Assuming that there is direct access to AST, a developer can focus on design and implement behavior (what to check/modify) specific to a node.

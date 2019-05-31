@@ -8,10 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ErrorRecorder {
@@ -59,9 +56,9 @@ public class ErrorRecorder {
             issues.add(new Issue("", "", 0, issueType, ""));
         }
         appendSummary(reportFilePath, issues,
-                new Commit("GIT_HASH_A", 1, "banana.git"));
+                new Commit("GIT_HASH_A", new Date().toString(), "banana.git"));
         appendSummary(reportFilePath, issues,
-                new Commit("GIT_HASH_B", 2, "apple.git"));
+                new Commit("GIT_HASH_B", new Date().toString(), "apple.git"));
 
 
     }

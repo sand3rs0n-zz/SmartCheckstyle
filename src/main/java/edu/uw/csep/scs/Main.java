@@ -58,7 +58,7 @@ public class Main {
         Option checkNewlines = new Option("n",false,"check new lines");
         options.addOption(checkNewlines);
     
-        Option report = new Option("r",true,"a path to report directory");
+        Option report = new Option("r",true,"generate error count report in a directory");
         options.addOption(report);
         
         CommandLineParser parser = new DefaultParser();
@@ -171,8 +171,11 @@ public class Main {
         }
     
         if (cmd.hasOption("r") && GitUtils.isGitRepo(cmd.getOptionValue("i"))) {
+            
             String reportPath = cmd.getOptionValue("r");
-            Commit commit = GitUtils.getRecentCommitId(cmd.getOptionValue("i"));
+            int hashLength = 10;
+            Commit commit = GitUtils.getRecentCommitId(cmd.getOptionValue("i"), hashLength);
+            
             if (commit == null) {
                 System.out.println("Failed to find HEAD on the input directory.");
             } else {
