@@ -14,16 +14,21 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-public class ErrorAnalyzer {
+public class ErrorRecorder {
 
-    public static void appendRecord(String reportFilePath, List<Issue> issues, String tagName)
+    public static void appendSummary(String reportFilePath, List<Issue> issues, Commit commit)
             throws IOException {
         Map<String, Long> errorCntsByType = issues.stream().collect(
                 Collectors.groupingBy(Issue::getIssueType, Collectors.counting()));
-        StringJoiner logRecord = new StringJoiner(",");
+    
         StringJoiner logHeader = new StringJoiner(",");
-        logRecord.add(tagName);
-        logHeader.add(" ");
+        logHeader.add("Commit");
+        logHeader.add("timestamp");
+        
+        StringJoiner logRecord = new StringJoiner(",");
+        logRecord.add(commit.getCommitId());
+        logRecord.add(String.valueOf(commit.getCommitTime()));
+        
         errorCntsByType.forEach((k, v) -> {
                     logHeader.add(k);
                     logRecord.add(v.toString());
@@ -51,8 +56,8 @@ public class ErrorAnalyzer {
         for (String issueType: issueTypes) {
             issues.add(new Issue("", "", 0, issueType, ""));
         }
-        appendRecord(reportFilePath, issues, "GIT_HASH_A");
-        appendRecord(reportFilePath, issues, "GIT_HASH_B");
+        appendSummary(reportFilePath, issues, new Commit("GIT_HASH_A", 1));
+        appendSummary(reportFilePath, issues, new Commit("GIT_HASH_B", 2));
 
 
     }

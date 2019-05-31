@@ -5,25 +5,30 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class TagIterator {
+
+public class GitUtils {
     
-    public static String getRecentCommitId(String pathName) {
+    public static Commit getRecentCommitId(String pathName) {
         File dir = new File(pathName);
-        String recentCommitId = null;
+        Commit commit = null;
         try {
             Git git = Git.open(dir);
-            recentCommitId = git.getRepository().resolve(Constants.HEAD).getName();
+            ObjectId recentCommit = git.getRepository().resolve(Constants.HEAD);
+            RevWalk revWalk = new RevWalk(git.getRepository());
+            RevCommit revCommit = revWalk.parseCommit(recentCommit);
+            commit = new Commit(recentCommit.getName(), revCommit.getCommitTime());
         } catch (IOException e) {
             System.out.println("Failed to get HEAD commit id.");
         }
-        return recentCommitId;
+        return commit;
     }
     
     public static boolean isGitRepo(String rootPath) {
@@ -78,6 +83,6 @@ public class TagIterator {
     
     public static void main(String[] args) throws IOException {
         File filePath = new File(args[0]);
-        TagIterator.checkStyleOnTags(filePath);
+        GitUtils.checkStyleOnTags(filePath);
     }
 }

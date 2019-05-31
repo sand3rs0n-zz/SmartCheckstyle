@@ -13,12 +13,12 @@ import java.util.List;
 import checkers.*;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import models.Issue;
 import modifiers.ImportModifier;
 import modifiers.JavadocModifier;
-import mutation.ErrorAnalyzer;
-import mutation.TagIterator;
+import mutation.Commit;
+import mutation.ErrorRecorder;
+import mutation.GitUtils;
 import org.apache.commons.cli.*;
 
 
@@ -174,17 +174,18 @@ public class Main {
             System.out.println(issue);
         }
     
-        if (cmd.hasOption("r") && TagIterator.isGitRepo(cmd.getOptionValue("i"))) {
+        if (cmd.hasOption("r") && GitUtils.isGitRepo(cmd.getOptionValue("i"))) {
             String reportPath = cmd.getOptionValue("r");
-            String commitId = TagIterator.getRecentCommitId(reportPath);
-            appendSummary(Paths.get(reportPath, "report.csv").toString(), issues, commitId);
+            Commit commit = GitUtils.getRecentCommitId(reportPath);
+            appendSummary(Paths.get(reportPath, "report.csv").toAbsolutePath().toString(),
+                    issues, commit);
         }
     }
 
-    private static void appendSummary(String filePath, List<Issue> issues, String commitId) {
+    private static void appendSummary(String filePath, List<Issue> issues, Commit commit) {
         
         try {
-            ErrorAnalyzer.appendRecord(filePath, issues, commitId);
+            ErrorRecorder.appendSummary(filePath, issues, commit);
         }
         catch (IOException e) {
             System.out.println("Failed to create summary " + e.getMessage());
