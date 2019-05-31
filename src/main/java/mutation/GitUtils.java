@@ -2,6 +2,7 @@ package mutation;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -56,8 +57,7 @@ public class GitUtils {
         ObjectId objectId = gitRepo.resolve(Constants.HEAD);
         RevWalk walk = new RevWalk(gitRepo);
         RevCommit revCommit = walk.parseCommit(objectId);
-        int commitTime = revCommit.getCommitTime();
-        return new Date(commitTime).toString();
+        return revCommit.getAuthorIdent().getWhen().toString();
     }
     
     public static Repository getGitRepo(String pathName) {
