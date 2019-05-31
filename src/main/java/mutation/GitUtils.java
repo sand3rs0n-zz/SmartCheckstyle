@@ -24,7 +24,11 @@ public class GitUtils {
             ObjectId recentCommit = git.getRepository().resolve(Constants.HEAD);
             RevWalk revWalk = new RevWalk(git.getRepository());
             RevCommit revCommit = revWalk.parseCommit(recentCommit);
-            commit = new Commit(recentCommit.getName(), revCommit.getCommitTime());
+            String repoName = git.getRepository().getConfig().getString("remote", "origin", "url");
+            
+            commit = new Commit(recentCommit.getName(),
+                    revCommit.getCommitTime(),
+                    repoName);
         } catch (IOException e) {
             System.out.println("Failed to get HEAD commit id.");
         }

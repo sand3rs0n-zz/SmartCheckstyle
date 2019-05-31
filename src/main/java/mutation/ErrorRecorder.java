@@ -22,10 +22,12 @@ public class ErrorRecorder {
                 Collectors.groupingBy(Issue::getIssueType, Collectors.counting()));
     
         StringJoiner logHeader = new StringJoiner(",");
+        logHeader.add("Git Repo.");
         logHeader.add("Commit");
-        logHeader.add("timestamp");
+        logHeader.add("Timestamp");
         
         StringJoiner logRecord = new StringJoiner(",");
+        logRecord.add(commit.getRepoName());
         logRecord.add(commit.getCommitId());
         logRecord.add(String.valueOf(commit.getCommitTime()));
         
@@ -56,8 +58,10 @@ public class ErrorRecorder {
         for (String issueType: issueTypes) {
             issues.add(new Issue("", "", 0, issueType, ""));
         }
-        appendSummary(reportFilePath, issues, new Commit("GIT_HASH_A", 1));
-        appendSummary(reportFilePath, issues, new Commit("GIT_HASH_B", 2));
+        appendSummary(reportFilePath, issues,
+                new Commit("GIT_HASH_A", 1, "banana.git"));
+        appendSummary(reportFilePath, issues,
+                new Commit("GIT_HASH_B", 2, "apple.git"));
 
 
     }
