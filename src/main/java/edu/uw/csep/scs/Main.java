@@ -176,7 +176,7 @@ public class Main {
     
         if (cmd.hasOption("r") && GitUtils.isGitRepo(cmd.getOptionValue("i"))) {
             String reportPath = cmd.getOptionValue("r");
-            Commit commit = GitUtils.getRecentCommitId(reportPath);
+            Commit commit = GitUtils.getRecentCommitId(cmd.getOptionValue("i"));
             appendSummary(Paths.get(reportPath, "report.csv").toAbsolutePath().toString(),
                     issues, commit);
         }
