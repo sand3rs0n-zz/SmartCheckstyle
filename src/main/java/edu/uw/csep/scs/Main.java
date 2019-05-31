@@ -152,17 +152,13 @@ public class Main {
             // whitespaces
             if (cmd.hasOption("ws")) {
                 WhitespaceChecker whitespaceChecker = new WhitespaceChecker(file.getName(), file.getPath());
-                List<Issue> whitespaceIssues = new ArrayList<>();
-                whitespaceChecker.visit(compilationUnit, whitespaceIssues);
-                issues.addAll(whitespaceIssues);
+                whitespaceChecker.visit(compilationUnit, issues);
             }
 
             // new lines
             if (cmd.hasOption("n")) {
                 NewLineChecker newLineChecker = new NewLineChecker(file.getName());
-                List<Issue> variableIssues = new ArrayList<>();
-                newLineChecker.visit(compilationUnit, variableIssues);
-                issues.addAll(variableIssues);
+                newLineChecker.visit(compilationUnit, issues);
             }
         }
 

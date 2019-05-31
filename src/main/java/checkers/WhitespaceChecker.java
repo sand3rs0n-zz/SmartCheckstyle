@@ -32,7 +32,7 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
     @Override
     public void visit(CompilationUnit n, List<Issue> issues) {
         if (n.getPackageDeclaration().isPresent()) {
-            this.packageName = n.getPackageDeclaration().toString();
+            this.packageName = n.getPackageDeclaration().get().getNameAsString().trim();
         } else {
             this.packageName = "N/A";
         }
@@ -93,11 +93,11 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
         Pattern multiWhitespace = Pattern.compile(".*if\\s\\s+[(].*");
         matcher = multiWhitespace.matcher(ifBlock);
         if (matcher.find()) {
-            issues.add(generateIssue(line,"] if statement has multiple whitespace before (."));
+            issues.add(generateIssue(line,"if statement has multiple whitespace before (."));
             return;
         }
 
-        issues.add(generateIssue(line,"] if statement is missing whitespace before (."));
+        issues.add(generateIssue(line,"if statement is missing whitespace before (."));
     }
 
     private void validateForStmt(String forBlock, int line, List<Issue> issues) {
@@ -110,11 +110,11 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
         Pattern multiWhitespace = Pattern.compile(".*for\\s\\s+[(].*");
         matcher = multiWhitespace.matcher(forBlock);
         if (matcher.find()) {
-            issues.add(generateIssue(line,"] for statement has multiple whitespace before (."));
+            issues.add(generateIssue(line,"for statement has multiple whitespace before (."));
             return;
         }
 
-        issues.add(generateIssue(line,"] for statement is missing whitespace before (."));
+        issues.add(generateIssue(line,"for statement is missing whitespace before (."));
     }
 
     private void validateCatchStmt(String catchBlock, int line, List<Issue> issues) {
@@ -127,21 +127,21 @@ public class WhitespaceChecker extends VoidVisitorAdapter<List<Issue>> {
         Pattern multiWhitespace = Pattern.compile(".*catch\\s\\s+[(].*");
         matcher = multiWhitespace.matcher(catchBlock);
         if (matcher.find()) {
-            issues.add(generateIssue(line,"] catch statement has multiple whitespace before (."));
+            issues.add(generateIssue(line,"catch statement has multiple whitespace before (."));
             return;
         }
 
         Pattern missingWhitespace = Pattern.compile(".*catch[(].*");
         matcher = missingWhitespace.matcher(catchBlock);
         if (matcher.find()) {
-            issues.add(generateIssue(line, "] catch statement is missing whitespace before (."));
+            issues.add(generateIssue(line, "catch statement is missing whitespace before (."));
             return;
         }
 
         Pattern missingWhitespaceAtStart = Pattern.compile(".*\\}[catch(].*");
         matcher = missingWhitespaceAtStart.matcher(catchBlock);
         if (matcher.find()) {
-            issues.add(generateIssue(line, "] catch statement is missing whitespace after {."));
+            issues.add(generateIssue(line, "catch statement is missing whitespace after {."));
             return;
         }
 

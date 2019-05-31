@@ -1,3 +1,5 @@
+package me.tomassetti.examples;
+
 import checkers.WhitespaceChecker;import com.github.javaparser.JavaParser;import com.google.common.base.Strings;
 import me.tomassetti.support.DirExplorer;
 import models.Issue;
