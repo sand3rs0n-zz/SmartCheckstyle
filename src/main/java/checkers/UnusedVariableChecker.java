@@ -100,7 +100,7 @@ public class UnusedVariableChecker {
 
     public NodeList<VariableDeclarator> findChildVariables(Node n, NodeList<VariableDeclarator> variables){
         if (n.getClass().equals(VariableDeclarator.class)){
-            variables.add((VariableDeclarator)n);
+            variables.add((VariableDeclarator)n.clone());
             return variables;
         }
         List<Node> children = n.getChildNodes();
@@ -117,7 +117,7 @@ public class UnusedVariableChecker {
 
     public NodeList<NameExpr> findUsedVariables(Node cu, NodeList<NameExpr> methods) {
         if (cu.getClass().equals(NameExpr.class)) {
-            methods.add((NameExpr)cu);
+            methods.add((NameExpr)cu.clone());
             return methods;
         }
         List<Node> children = cu.getChildNodes();
