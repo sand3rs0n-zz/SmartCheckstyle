@@ -177,8 +177,13 @@ public class Main {
         if (cmd.hasOption("r") && GitUtils.isGitRepo(cmd.getOptionValue("i"))) {
             String reportPath = cmd.getOptionValue("r");
             Commit commit = GitUtils.getRecentCommitId(cmd.getOptionValue("i"));
-            appendSummary(Paths.get(reportPath, "report.csv").toAbsolutePath().toString(),
-                    issues, commit);
+            if (commit == null) {
+                System.out.println("Failed to find HEAD on the input directory.");
+            } else {
+                appendSummary(Paths.get(reportPath, "report.csv").toAbsolutePath().toString(),
+                        issues, commit);
+            }
+            
         }
     }
 
