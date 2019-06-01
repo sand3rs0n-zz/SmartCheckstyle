@@ -123,14 +123,12 @@ A developer can extend existing capabilities by adding a new checker or modifier
     
     ```
 
-    <br/>
 #### 3. Mutation testing using open source
    The previous two approaches might not be sufficient or efficient for production development. For debugging and testing of a specific case, one can write or borrow small code snippets from other projects. To begin with, we have also located our small test sets in ```resources``` folder. However, we experienced that the approach makes the snippet code tends to be modified over time and produce unexpected test results. Sometimes, it can also cause incomplete implementation, although passing two naive code base. We also learned that manipulating AST using Java parser APIs to introduce style error itself can also be the buggy process itself. So we think mutation testing using old codebase can compensate for those the limitation. 
    
    <br/>
    Here are the steps we suggest:
 
-    <br/>
    ##### A. Select open source
 
    There are many open source projects available on public repository services. Since we need somewhat large codebase and also public APIs designed for applications, a utility library with years of commit log would be good candidates. For example, Guava, Apache POI, and Apache Common utility are good candidates.
