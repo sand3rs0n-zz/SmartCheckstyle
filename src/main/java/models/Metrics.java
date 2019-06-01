@@ -43,7 +43,8 @@ public class Metrics {
     @Override
     public String toString() {
         return "Total - NumClasses: " + numClasses + " | NumMethods: " + numMethods
-                + " | NumLines: " + numLines + " | TimeToAnalysis: " + analysisInMilliseconds;
+                + " | NumLines: " + numLines
+                + " | AnalysisInMilliseconds: " + analysisInMilliseconds;
     }
     
 }

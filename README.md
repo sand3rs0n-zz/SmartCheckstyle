@@ -46,6 +46,16 @@
 * Developer Document - ![developer document](doc/developer_note.md)
 * Evaluation Document
 
+## Style Check Results (sample)
+
+Below graph shows the style check results from the (popular) library on GitHub. 
+![](doc/style_check_errors_on_libraries.png)
+
+## Performance
+
+Below graph shows the analysis time per class. We learned that the complexity of code affects the performance of our library. For example, Guava, the library from Google has the double size of code base than apache commons-lang library. 
+![](doc/performance_analysis_per_class.png)
+
 ### References:
 * https://javaparser.org/
 * https://tomassetti.me/getting-started-with-javaparser-analyzing-java-code-programmatically/
