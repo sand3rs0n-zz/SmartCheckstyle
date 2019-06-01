@@ -70,7 +70,7 @@ A developer can extend existing capabilities by adding a new checker or modifier
 ### Integration and Error Aggregation
 
 1. A developer also needs to integrate the new checker/modifier in the main function defining a new argument.
-2. There would be a various way of aggregate style errors. In this project, we pass the reference to the collection of Issue objects when checker/modifier visits nodes. 
+2. There would be a various way of aggregate style errors. In this project, we pass the copy of the reference to the collection of Issue objects when checker/modifier visits nodes. 
 
     ```java
     List<Issue> issues = new ArrayList<>();
@@ -83,70 +83,72 @@ A developer can extend existing capabilities by adding a new checker or modifier
 
 ### Implementation, debugging and testing a new checker/modifier
 
-####1. Manual testing
-   The quick and easy way to test new checker/modifier is to create/find a java file with style error manually.  It forces the java parser to construct the CompilationUnit with the style error. This approach is useful at the beginning of implementation as a developer can learn the APIs and study the feasibility of style check. However, as the code gets mature or a developer gets used to the APIs, it would be demanded to utilize the test automation infrastructures.
+#### 1. Manual testing
+
+The quick and easy way to test new checker/modifier is to create/find a java file with style error manually.  It forces the java parser to construct the CompilationUnit with the style error. This approach is useful at the beginning of implementation as a developer can learn the APIs and study the feasibility of style check. However, as the code gets mature or a developer gets used to the APIs, it would be demanded to utilize the test automation infrastructures.
 
 #### 2. Using JUnit frameworks
-   It's also useful to use the JUnit framework to test new checker/modifier. In unit tests, the developer can write the code that constructs an abstract syntax tree(AST) with a specific style error. Also, he/she also get AST from a sample file and modify(i.e., chop Javadoc) to miss some style. For example, the test code below applies the Javadoc remover class into the AST from a file. Then it asserts the number of issues found from the no-Javadoc AST.
 
-   ```java
-    public class JavadocRemover extends ModifierVisitor {
+It's also useful to use the JUnit framework to test new checker/modifier. In unit tests, the developer can write the code that constructs an abstract syntax tree(AST) with a specific style error. Also, he/she also get AST from a sample file and modify(i.e., chop Javadoc) to miss some style. For example, the test code below applies the Javadoc remover class into the AST from a file. Then it asserts the number of issues found from the no-Javadoc AST.
 
-        //...
-        
-        @Override
-        public Visitable visit(MethodDeclaration n, Object arg) {
-            super.visit(n, arg);
-            if (!n.isPrivate()) {
-                removeJavadoc(n);
-            }
-            return n;
-        
-        //...
-    }
-   ```
+```java
+public class JavadocRemover extends ModifierVisitor {
 
-    ```java
-    public class JavadocCheckerTest{
+    //...
     
-        @Test
-        public void testNoJavaDocInPublicClass() throws FileNotFoundException {
-            
-            ClassLoader classLoader = this.getClass().getClassLoader();
-            String fileName = classLoader.getResource("checkers/DocumentChecker1.java").getFile();
-            CompilationUnit cu = JavaParser.parse(new File(fileName));
-            JavadocRemover jdr = new JavadocRemover();
-            jdr.visit(cu, null);
-        int cntRemoved = jdr.getJavadocRemovalCount();
-            // assert it with the number of issues found by JavadocChecker.
+    @Override
+    public Visitable visit(MethodDeclaration n, Object arg) {
+        super.visit(n, arg);
+        if (!n.isPrivate()) {
+            removeJavadoc(n);
+        }
+        return n;
     
-    ```
+    //...
+}
+```
+
+```java
+public class JavadocCheckerTest{
+
+    @Test
+    public void testNoJavaDocInPublicClass() throws FileNotFoundException {
+        
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        String fileName = classLoader.getResource("checkers/DocumentChecker1.java").getFile();
+        CompilationUnit cu = JavaParser.parse(new File(fileName));
+        JavadocRemover jdr = new JavadocRemover();
+        jdr.visit(cu, null);
+    int cntRemoved = jdr.getJavadocRemovalCount();
+        // assert it with the number of issues found by JavadocChecker.
+
+```
 
 #### 3. Mutation testing using open source
-   The previous two approaches might not be sufficient or efficient for production development. For debugging and testing of a specific case, one can write or borrow small code snippets from other projects. To begin with, we have also located our small test sets in ```resources``` folder. However, we experienced that the approach makes the snippet code tends to be modified over time and produce unexpected test results. Sometimes, it can also cause incomplete implementation, although passing two naive code base. We also learned that manipulating AST using Java parser APIs to introduce style error itself can also be the buggy process itself. So we think mutation testing using old codebase can compensate for those the limitation. 
-   
-   <br/>
-   Here are the steps we suggest:
 
-   ##### A. Select open source
+The previous two approaches might not be sufficient or efficient for production development. For debugging and testing of a specific case, one can write or borrow small code snippets from other projects. To begin with, we have also located our small test sets in ```resources``` folder. However, we experienced that the approach makes the snippet code tends to be modified over time and produce unexpected test results. Sometimes, it can also cause incomplete implementation, although passing two naive code base. We also learned that manipulating AST using Java parser APIs to introduce style error itself can also be the buggy process itself. So we think mutation testing using old codebase can compensate for those the limitation. 
 
-   There are many open source projects available on public repository services. Since we need somewhat large codebase and also public APIs designed for applications, a utility library with years of commit log would be good candidates. For example, Guava, Apache POI, and Apache Common utility are good candidates.
+Here are the steps we suggest:
 
-   ##### B. Produce style check report
+##### A. Select open source
 
-   Good candidate projects should have a list of tags. Going back to a tag back in a couple of years, and run source code with ```-r REPORT_DIRECTORY```. Below command will iterate java source code in ```poi/src``` folder, check Javadoc and declaration styles, and then produce a report ```~/Documents/report.csv```.
+There are many open source projects available on public repository services. Since we need somewhat large codebase and also public APIs designed for applications, a utility library with years of commit log would be good candidates. For example, Guava, Apache POI, and Apache Common utility are good candidates.
 
-   ```bash
-     $ java -jar build/libs/SmartCheckstyle-all-1.0-SNAPSHOT.jar -i /../poi/src -j -d -r ~/Documents/
-   ```
+##### B. Produce style check report
 
-   ##### C. Implement checker/modifiler
+Good candidate projects should have a list of tags. Going back to a tag back in a couple of years, and run source code with ```-r REPORT_DIRECTORY```. Below command will iterate java source code in ```poi/src``` folder, check Javadoc and declaration styles, and then produce a report ```~/Documents/report.csv```.
 
-   We recommend updating the Main class with argument option in the early stage of development. It will allow appending the errors counts to the report. 
+```bash
+    $ java -jar build/libs/SmartCheckstyle-all-1.0-SNAPSHOT.jar -i /../poi/src -j -d -r ~/Documents/
+```
 
-   ##### D. Use codebase with reasonble delta
+##### C. Implement checker/modifiler
 
-   Another way of using the old code for mutating style is to iterate commits in-between two minor or major releases. For example, the Apache POI library had two minor release in 2018. We can check styles against two commits and compare the errors found. We might be careful to pick two tags too far since the code might get modified in many places, then we might not consider them to be mutation set. To get the two commits reasonably mutated, we can pick two *minor* releases.
+We recommend updating the Main class with argument option in the early stage of development. It will allow appending the errors counts to the report. 
+
+##### D. Use codebase with reasonble delta
+
+Another way of using the old code for mutating style is to iterate commits in-between two minor or major releases. For example, the Apache POI library had two minor release in 2018. We can check styles against two commits and compare the errors found. We might be careful to pick two tags too far since the code might get modified in many places, then we might not consider them to be mutation set. To get the two commits reasonably mutated, we can pick two *minor* releases.
 
 ```bash
 $ git for-each-ref --sort=-taggerdate --format '%(refname) %(taggerdate)' refs/tags
