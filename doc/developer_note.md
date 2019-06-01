@@ -139,7 +139,7 @@ There are many open source projects available on public repository services. Sin
 Good candidate projects should have a list of tags. Going back to a tag back in a couple of years, and run source code with ```-r REPORT_DIRECTORY```. Below command will iterate java source code in ```poi/src``` folder, check Javadoc and declaration styles, and then produce a report ```~/Documents/report.csv```.
 
 ```bash
-    $ java -jar build/libs/SmartCheckstyle-all-1.0-SNAPSHOT.jar -i /../poi/src -j -d -r ~/Documents/
+$ java -jar build/libs/SmartCheckstyle-all-1.0-SNAPSHOT.jar -i /../poi/src -j -d -r ~/Documents/
 ```
 
 ##### C. Implement checker/modifiler
