@@ -63,14 +63,13 @@ We use the ratio of total analysis time to number of class in each library. We l
 <br/>
 
  Detailed data is the base for the analysis above. 
-   
+
   |Git Repo.	|Commit	|Timestamp	|AnalysisInSeconds	|NumClasses	|NumMethods	|NumLines|
   |:-:|:-:|:-:|:-:|:-:|:-:|:-:|
   |javaparser/.git	|6cce95f413	|Tue Apr 30 07:02:41 PDT 2019	|49	|478	|5226	|55385|
   |poi/.git	|2e3f020c7a	|Sat Oct 23 05:15:57 PDT 2010	|31	|974	|8041	|122538|
   |guava/.git	|671cc99f7c	|Sat May 25 19:38:05 PDT 2019	|131	|1314	|10587	|185638|
   |commons-lang/.git	|22f91fa70d	|Tue May 28 04:39:24 PDT 2019	|136	|221	|2929	|77300|
-
 
 ### References:
 * https://javaparser.org/

@@ -59,7 +59,7 @@ public class Main {
         Option checkNewlines = new Option("n",false,"check new lines");
         options.addOption(checkNewlines);
     
-        Option report = new Option("r",true,"generate error count report in a directory");
+        Option report = new Option("r",true,"error report directory");
         options.addOption(report);
         
         CommandLineParser parser = new DefaultParser();
