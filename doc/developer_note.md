@@ -2,11 +2,10 @@
 
 ## Build & Run
 
-1. A developer can build this project with Gradle. The script, ```./gradlew``` should download and install all dependencies required, and below command will generate a build in ```build/libs/```folder.
+1. A developer can build this project with Gradle. The script, ```./gradlew``` should download and install all dependencies required, and below command will generate a build in ```build/libs/```folder containing all dependencies.
    
    ```bash
-    ./gradlew build
-    gradle genJar
+    ./gradlew clean genJar
    ```
 
 2. A developer can verify the build with below command. 
@@ -170,10 +169,10 @@ $ java -jar ../SmartCheckstyle-all-1.0-SNAPSHOT.jar -i ./poi/src -j -d -new_chec
 
 With ```-r .``` arguments, we should generate ```report.csv``` with the report of table below.
 
-|Git Repo.    |Commit    |Timestamp    |AnalysisInSeconds    |NumClasses    |NumMethods    |NumLines    |DECLARATION    |METHOD_CHECKER    |JAVADOC    |WHITESPACE    |IMPORT_CHECKER    |VARIABLE_CHECKER
+|Git Repo.    |Commit    |Timestamp    |AnalysisInSeconds    |NumClasses    |NumMethods    |NumLines    |DECLARATION    |METHOD_CHECKER    |JAVADOC    |WHITESPACE    |IMPORT_CHECKER    |VARIABLE_CHECKER |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|Repository[/poi/.git]    |b41ee58404    |Fri Aug 31 05:09:43 PDT 2018    |49    |1334    |11652    |174391    |3434    |4759    |13443    |463    2712    |4333|
-|Repository[/poi/.git]    |69b0652676    |Mon Nov 26 13:27:30 PST 2018    |47    |1337    |11597    |174532    |3440    |4741    |13362    |464    2718    |4340|
+|Repository[/poi/.git]    |b41ee58404    |Fri Aug 31 05:09:43 PDT 2018    |49    |1334    |11652    |174391    |3434    |4759    |13443    |463    |2712    |4333|
+|Repository[/poi/.git]    |69b0652676    |Mon Nov 26 13:27:30 PST 2018    |47    |1337    |11597    |174532    |3440    |4741    |13362    |464    |2718    |4340|
 
 Instead of comparing the number of errors, we can compare/visualize the number of style error per class. From *REL_4_0_0_FINAL(blue)* to *REL_4_0_1(orange)*, we can see the improvements in all criteria. For new checker/modifier, one can find either the improvement or not depending on the goal and conclude different results. However, it should give enough context whether or not the implementation can find the expected errors. 
 
