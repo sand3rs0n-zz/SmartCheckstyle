@@ -46,7 +46,8 @@
 ## Project Documents
 * [User Document](https://docs.google.com/document/d/1unZn74rsWoqmmMjxvvIEN35ergevdu12DCR0_QV2tEM/edit?usp=sharing)
 * [Developer Document](doc/developer_note.md)
-* [Evaluation Document](https://docs.google.com/document/d/18qA1C3Z1E_V-I_pObiWWadm94s0TtogtX3wrY8ZeiN4/edit?usp=sharing)
+* [Evaluation Document](https://docs.google.com/document/d/1G97O6QCEvW1hm3hPpgr3mEkdd5ahR-yDD4J2C2QdXSo/edit?usp=sharing)
+* [Presentation Document](https://docs.google.com/document/d/18qA1C3Z1E_V-I_pObiWWadm94s0TtogtX3wrY8ZeiN4/edit?usp=sharing)
 
 ## Some Style Check Test Results
 
