@@ -16,7 +16,8 @@
 3. Checkers/modifiers get triggered based on the arguments, and they will print out the errors sorted by package name, file name, and line number.
 
     ```bash
-    usage: ls [-d] [-h] [-i <arg>] [-im] [-j] [-m] [-md] [-n] [-r <arg>] [-va] [-ws]
+    usage: ls [-d] [-h] [-i <arg>] [-im] [-j] [-m] [-md] [-n] [-r <arg>] [-sup]
+       [-va] [-ws]
     -d          check declarations style
     -h          options
     -i <arg>    input root directory or file path
@@ -26,6 +27,7 @@
     -md         check unused methods
     -n          check new lines
     -r <arg>    error report directory
+    -sup        suppress checking on private or public enum class
     -va         check unused variables
     -ws         check whitespaces
 
