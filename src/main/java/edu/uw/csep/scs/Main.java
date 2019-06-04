@@ -62,7 +62,7 @@ public class Main {
         Option report = new Option("r",true,"error report directory");
         options.addOption(report);
     
-        Option checkSup = new Option("sup",false,"suppress check on private");
+        Option checkSup = new Option("sup",false,"suppress checking on private or public enum class");
         options.addOption(checkSup);
         
         CommandLineParser parser = new DefaultParser();
