@@ -34,7 +34,7 @@
   * Documentation for public methods (Jae)
 
 * Collector Model
-  * Object passed to checkers (model/Issue)
+  * Object passed to checkers (Model/Issue)
   
 * Auto-update
   * Fix unused methods/variables/imports (Steven)
@@ -57,7 +57,7 @@ Below graph shows the results from checking styles on the (popular) library on G
 
 ## Performance Analysis
 
-We use the ratio of total analysis time to number of class in each library. We learned that the performance isn't proportional to the number of classes, methods, and even the errors the tool finds.  For example, Guava, the library from Google has the more than double size of code base than apache commons-lang library.   
+We use the ratio of total analysis time to number of class in each library. We learned that the performance isn't proportional to the number of classes, methods, and even the errors the tool finds.  For example, Guava, the library from Google has more than double size of code base than apache commons-lang library.   
 <div style="display: flex; justify-content: center;">
 <img src="doc/performance_analysis_per_class.png" width="80%" height="80%"/>
 </div>
@@ -75,4 +75,5 @@ We use the ratio of total analysis time to number of class in each library. We l
 
 ### References:
 * https://javaparser.org/
+* https://google.github.io/styleguide/javaguide.html
 * https://tomassetti.me/getting-started-with-javaparser-analyzing-java-code-programmatically/
