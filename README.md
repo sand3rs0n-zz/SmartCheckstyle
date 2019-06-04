@@ -38,7 +38,7 @@
   * Object passed to checkers (model/Issue)
   
 * Auto-update
-  * Fix improper indenting (Steven)
+  * Fix unused methods/variables/imports (Steven)
   * Update javadoc (Jae)
 
 * Main.java
