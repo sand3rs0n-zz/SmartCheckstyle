@@ -61,6 +61,9 @@ public class Main {
     
         Option report = new Option("r",true,"error report directory");
         options.addOption(report);
+    
+        Option checkSup = new Option("sup",false,"suppress check on private");
+        options.addOption(checkSup);
         
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -96,7 +99,8 @@ public class Main {
             nodeCounter.visit(compilationUnit, metrics);
             // javadoc
             if (cmd.hasOption("j")) {
-                JavadocChecker javadocChecker = new JavadocChecker(file.getName());
+                boolean suppress = cmd.hasOption("sup");
+                JavadocChecker javadocChecker = new JavadocChecker(file.getName(), suppress);
                 javadocChecker.visit(compilationUnit, issues);
 
                 if (cmd.hasOption("m")) {

@@ -16,9 +16,11 @@ public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
     private String packageName;
     private String fileName;
     private final static String ISSUE_TYPE = "JAVADOC";
+    private boolean suppress;
     
-    public JavadocChecker(String fileName) {
+    public JavadocChecker(String fileName, boolean suppress) {
         this.fileName = fileName;
+        this.suppress = suppress;
     }
     
     @Override
@@ -65,6 +67,22 @@ public class JavadocChecker extends VoidVisitorAdapter<List<Issue>> {
             issues.add(generateIssue(lineNumber, "Public constructor, "
                     + constName + ", is missing javadoc."));
         
+        }
+    }
+    
+    
+    @Override
+    public void visit(EnumDeclaration n, List<Issue> issues) {
+        if (n.isPrivate() || this.suppress == true) {
+            return;
+        }
+        super.visit(n, issues);
+        if (!n.hasJavaDocComment()) {
+            int lineNumber = n.getRange().get().begin.line;
+            issues.add(generateIssue(lineNumber, n.getNameAsString()
+                    + " is missing javadoc."));
+        } else {
+            Optional<Javadoc> jd = n.getJavadoc();
         }
     }
     

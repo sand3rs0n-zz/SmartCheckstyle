@@ -21,7 +21,7 @@ public class JavadocCheckerExample {
             System.out.println(path);
 
             try {
-                JavadocChecker dChecker = new JavadocChecker(path);
+                JavadocChecker dChecker = new JavadocChecker(path, false);
                 dChecker.visit(JavaParser.parse(file), issues);
             } catch (IOException e) {
                 new RuntimeException(e);
