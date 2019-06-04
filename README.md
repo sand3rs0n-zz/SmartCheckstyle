@@ -25,13 +25,12 @@
 ## Project Definition
 
 * Base Set of Features:
-  * Indent checking (Nivetha, Surya)
   * Extra whitespace (Nivetha, Surya)
   * Newlines (Nivetha, Surya)
   * Unused variables, imports, and methods (Kate)
 
 * Smarter Static Checks 
-  * variable/method name checking (Steven)
+  * Variable/method name checking (Steven)
   * Documentation for public methods (Jae)
 
 * Collector Model
